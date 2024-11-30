@@ -78,8 +78,8 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  # repo: git@github.com:aikun21/aikun21.github.io.git
-  repo: https://github.com/aikun21/aikun21.github.io.git
+  repo: git@github.com:aikun21/aikun21.github.io.git
+  # repo: https://github.com/aikun21/aikun21.github.io.git
   branch: main
 
 algolia:
