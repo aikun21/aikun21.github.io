@@ -48,7 +48,7 @@ highlight:
 # per_page: Posts displayed per page. (0 = disable pagination)
 # order_by: Posts order. (Order by date descending by default)
 index_generator:
-  path: ''
+  path: ""
   per_page: 10
   order_by: -date
 
@@ -78,18 +78,17 @@ theme: next
 ## Docs: https://hexo.io/docs/deployment.html
 deploy:
   type: git
-  # repo: https://github.com/kingRywen/kingRywen.github.io.git
-  repo: git@github.com:kingRywen/kingRywen.github.io.git
-  branch: gh-pages
+  repo: git@github.com:aikun21/aikun21.github.io.git
+  branch: main
 
 algolia:
-  applicationID: 'FZEIYJ3Q3S'
-  apiKey: '8abf45f1b4a3ca657d8ec5763e82b1cd'
-  adminApiKey: 'e597034d14e424a9c5e249265c2b16f9'
-  indexName: 'dev_rywenblog'
+  applicationID: "FZEIYJ3Q3S"
+  apiKey: "8abf45f1b4a3ca657d8ec5763e82b1cd"
+  adminApiKey: "e597034d14e424a9c5e249265c2b16f9"
+  indexName: "dev_rywenblog"
   chunkSize: 5000
 
 leancloud_visitors:
   enable: true
-  app_id: '63RY9WnNmv7NWhOQwNNvrt7B-gzGzoHsz'
-  app_key: '9ApHEPue2BgbfGIRuOQs2kbd'
+  app_id: "63RY9WnNmv7NWhOQwNNvrt7B-gzGzoHsz"
+  app_key: "9ApHEPue2BgbfGIRuOQs2kbd"
