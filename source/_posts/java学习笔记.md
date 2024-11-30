@@ -17,4 +17,4 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Pellentesque hendrerit 
 {% endblockquote %}
 
 
-![](./images/java_mysql.png)
+![](java_mysql.png)
