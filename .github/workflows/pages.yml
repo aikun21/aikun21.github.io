@@ -29,6 +29,8 @@ jobs:
             ${{ runner.OS }}-npm-cache
       - name: Install Dependencies
         run: npm install
+      - name: branch init change
+        run: git config --global init.defaultBranch main
       - name: Build
         run: npm run page
       - name: Upload Pages artifact
