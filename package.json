@@ -6,7 +6,7 @@
     "version": "3.9.0"
   },
   "scripts": {
-    "serve": "hexo s",
+    "serve": "hexo clean && hexo s",
     "build": "hexo clean && hexo generate",
     "page": "hexo clean && hexo deploy"
   },
