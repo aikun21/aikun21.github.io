@@ -216,4 +216,3 @@ longhronshens/mycat-docker
 ## 4. 测试MyCat
 
 {% asset_img image.png 测试MyCat %}
-

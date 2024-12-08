@@ -12,7 +12,7 @@ tags:
 
 ### 1.1 安装MySQL
 
-![](java_mysql.png)
+{% asset_img java_mysql.png %}
 
 由于Docker容器的IP地址是动态分配的，每次启动相同容器，它的IP地址都会有变化。这就非常影响数据库集群的搭建，比如说MySQL 2要同步MySQL 1的数据，MySQL1容器的IP地址经常变来变去肯定是不行的，所以我们要给每个Docker容器都分配固定的IP地址。
 
@@ -43,10 +43,10 @@ mysql:5.7.41 \
 
 在Navicat上面给MySQL_1创建一个新账户，将来MSQL_2和MySQL_3订阅binlog日志的时候就用这个帐户登陆MySQL_1节点。
 
-![](image1.png)
+{% asset_img image1.png %}
 
 我们切换到服务器权限选项卡，然后勾选下面的三个权限，这三个权限都是订阅日志所必须的。
-![](image2.png)
+{% asset_img image2.png %}
 
 接下来我们要修改配置文件，所以要先关闭MySQL容器。运行Docker命令，关闭MySQL 1容器
 
@@ -92,7 +92,7 @@ mysql:5.7.41 \
 --lower_case_table_names=1
 ```
 
-丛节点配置文件内容如下:
+丛节点配���文件内容如下:
 
 ```conf
 [mysqld]
@@ -110,7 +110,7 @@ sql_mode = NO_ENGINE_SUBSTITUTION,STRICT_TRANS_TABLES
 
 作为从节点来说，为什么要开启binlog日志呢?这是为了将来挂载更多读节点而准备的。现在我们是两个从节点与主节点同步数据，主节点的压力并不大。如果将来挂载更多的从节点，那么主节点的磁盘和网络压力就很大了所以我们要分担主节点的压力。让从节点跟从节点去同步数据。例如下面的示意图，A3要把数据同步给A4，A3节点必须要开启binloq日志才可以。
 
-![](image3.png)
+{% asset_img image3.png %}
 
 在Navicat上面通过MySQL 2节点执行SQL语句，让MySQL 2订阅MySQL 1的日志文件，实现数据同步
 
@@ -127,7 +127,7 @@ show slave status;
 
 如果SQL语句执行结果中出现两个YES，说明主从同步就配置成功了。如果不成功，你就再检查上述的步骤，然后重新运行这几行SQL语句。或者先停掉容器，再删除容器和映射到 /root 目录的mysql目录，重新创建容器，严格遵守每个配置步骤，重新弄一遍主从同步。
 
-![](image4.png)
+{% asset_img image4.png %}
 
 ## 4 创建MySQL_3容器
 
@@ -308,7 +308,7 @@ show slave status;
 
 由于MySQL 1和MySQL 4都是主节点，我们在这两个节点中任意一个MySQL上面导入SQL文件，那么数据表都会同步到其余的5个MySQL节点上面。例如在MySQL1节点上新建逻辑库，命名为 his，然后把SQL文件导入到该逻辑库中。
 
-![image5](image5.png)
+{% asset_img image5.png %}
 
 ```bash
 create database his;
