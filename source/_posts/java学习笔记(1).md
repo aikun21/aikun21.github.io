@@ -16,6 +16,8 @@ tags:
 
 由于Docker容器的IP地址是动态分配的，每次启动相同容器，它的IP地址都会有变化。这就非常影响数据库集群的搭建，比如说MySQL 2要同步MySQL 1的数据，MySQL1容器的IP地址经常变来变去肯定是不行的，所以我们要给每个Docker容器都分配固定的IP地址。
 
+<!-- more -->
+
 Docker默认的网段是 172.17.0.x的，有时候不同项目用到的容器都在同一个网段里面，难免我们使用的时候会弄混淆了。所以不同项目用到的容器最好放在不同的网段。于是我们要为咱们的项目创建一个新的网段，创建容器的时候，把它们的IP地址绑定到该网段。执行下面的命令，创建新的网段:
 
 ```bash
@@ -328,4 +330,5 @@ source /root/his.sql;
 stop slave;
 set global sql_slave_skip_counter=1;
 start slave;
+show slave status;
 ```
