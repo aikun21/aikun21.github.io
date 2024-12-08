@@ -215,4 +215,5 @@ longhronshens/mycat-docker
 
 ## 4. 测试MyCat
 
-[测试MyCat](./java学习笔记(2)-Mycat管理Mysql集-测试.md)
+{% asset_img image.png 测试MyCat %}
+
