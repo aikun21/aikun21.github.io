@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aikun21.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"FZEIYJ3Q3S","apiKey":"8abf45f1b4a3ca657d8ec5763e82b1cd","indexName":"dev_rywenblog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="mysql集群5个节点都能同步到数据表。但是毕竟我们写程序总不能跟6个MySQL打交道吧，需要有一个对接人，这个对接人就是MyCat。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="java学习笔记(2)-Mycat管理Mysql集">
+<meta property="og:url" content="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/index.html">
+<meta property="og:site_name" content="Rywen&#39;s Blog">
+<meta property="og:description" content="mysql集群5个节点都能同步到数据表。但是毕竟我们写程序总不能跟6个MySQL打交道吧，需要有一个对接人，这个对接人就是MyCat。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image1.png">
+<meta property="og:image" content="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image2.png">
+<meta property="og:image" content="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image3.png">
+<meta property="og:image" content="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image4.png">
+<meta property="article:published_time" content="2024-12-01T14:13:59.000Z">
+<meta property="article:modified_time" content="2024-12-08T13:59:45.296Z">
+<meta property="article:author" content="Rywen">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image1.png">
+
+<link rel="canonical" href="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>java学习笔记(2)-Mycat管理Mysql集 | Rywen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Rywen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">生活不止眼前的苟且，还有诗和远方.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          java学习笔记(2)-Mycat管理Mysql集
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-01 22:13:59" itemprop="dateCreated datePublished" datetime="2024-12-01T22:13:59+08:00">2024-12-01</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-08 21:59:45" itemprop="dateModified" datetime="2024-12-08T21:59:45+08:00">2024-12-08</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>mysql集群5个节点都能同步到数据表。但是毕竟我们写程序总不能跟6个MySQL打交道吧，需要有一个对接人，这个对接人就是MyCat。</p>
+<span id="more"></span>
+
+<h2 id="1-安装MyCat"><a href="#1-安装MyCat" class="headerlink" title="1. 安装MyCat"></a>1. 安装MyCat</h2><p>MyCat并不是数据库，它只是SQL语句的路由器而已。创建MyCat容器之前，我们先拉取mycat的镜像1.6.7.4版本。</p>
+  <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker pull mycat/mycat:1.6.7.4</span><br></pre></td></tr></table></figure>
+<h2 id="2-配置MyCat"><a href="#2-配置MyCat" class="headerlink" title="2. 配置MyCat"></a>2. 配置MyCat</h2><p>修改mycat的配置文件，修改mycat的schema.xml文件，添加mysql集群的配置。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span>?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mycat</span>:schema <span class="keyword">SYSTEM</span> <span class="string">&quot;schema.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mycat:schema</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line"></span><br><span class="line"> <span class="tag">&lt;<span class="name">schema</span> <span class="attr">name</span>=<span class="string">&quot;his&quot;</span> <span class="attr">checkSQLschema</span>=<span class="string">&quot;true&quot;</span> <span class="attr">sqlMaxLimit</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_action&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_customer&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_dept&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_goods&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_module&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_permission&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_role&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_user&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_rule&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_order&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_appointment&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_appointment_restriction&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_system&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_checkup_report&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_customer_location&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_flow_regulation&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">table</span> <span class="attr">name</span>=<span class="string">&quot;tb_customer_im&quot;</span> <span class="attr">primaryKey</span>=<span class="string">&quot;id&quot;</span> <span class="attr">dataNode</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">type</span>=<span class="string">&quot;global&quot;</span>/&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">schema</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dataNode</span> <span class="attr">name</span>=<span class="string">&quot;dn1&quot;</span> <span class="attr">dataHost</span>=<span class="string">&quot;ds_1&quot;</span> <span class="attr">database</span>=<span class="string">&quot;his&quot;</span> /&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">dataHost</span> <span class="attr">name</span>=<span class="string">&quot;ds_1&quot;</span> <span class="attr">maxCon</span>=<span class="string">&quot;1000&quot;</span> <span class="attr">minCon</span>=<span class="string">&quot;10&quot;</span> <span class="attr">balance</span>=<span class="string">&quot;1&quot;</span> <span class="attr">writeType</span>=<span class="string">&quot;0&quot;</span> <span class="attr">dbType</span>=<span class="string">&quot;mysql&quot;</span> <span class="attr">dbDriver</span>=<span class="string">&quot;native&quot;</span> <span class="attr">switchType</span>=<span class="string">&quot;1&quot;</span> <span class="attr">slaveThreshold</span>=<span class="string">&quot;100&quot;</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">heartbeat</span>&gt;</span>select 1<span class="tag">&lt;/<span class="name">heartbeat</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;w1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;172.18.0.2:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;abc123456&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;w1r1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;172.18.0.3:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;abc123456&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;w1r2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;172.18.0.4:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;abc123456&quot;</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line">   <span class="tag">&lt;<span class="name">writeHost</span> <span class="attr">host</span>=<span class="string">&quot;w2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;172.18.0.5:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;abc123456&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;w2r1&quot;</span> <span class="attr">url</span>=<span class="string">&quot;172.18.0.6:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;abc123456&quot;</span>/&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">readHost</span> <span class="attr">host</span>=<span class="string">&quot;w2r2&quot;</span> <span class="attr">url</span>=<span class="string">&quot;172.18.0.7:3306&quot;</span> <span class="attr">user</span>=<span class="string">&quot;root&quot;</span> <span class="attr">password</span>=<span class="string">&quot;abc123456&quot;</span>/&gt;</span></span><br><span class="line">   <span class="tag">&lt;/<span class="name">writeHost</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;/<span class="name">dataHost</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:schema</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>修改mycat的server.xml文件</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=<span class="string">&quot;1.0&quot;</span> encoding=<span class="string">&quot;UTF-8&quot;</span>?&gt;</span></span><br><span class="line"><span class="comment">&lt;!-- - - Licensed under the Apache License, Version 2.0 (the &quot;License&quot;); </span></span><br><span class="line"><span class="comment">	- you may not use this file except in compliance with the License. - You </span></span><br><span class="line"><span class="comment">	may obtain a copy of the License at - - http://www.apache.org/licenses/LICENSE-2.0 </span></span><br><span class="line"><span class="comment">	- - Unless required by applicable law or agreed to in writing, software - </span></span><br><span class="line"><span class="comment">	distributed under the License is distributed on an &quot;AS IS&quot; BASIS, - WITHOUT </span></span><br><span class="line"><span class="comment">	WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. - See the </span></span><br><span class="line"><span class="comment">	License for the specific language governing permissions and - limitations </span></span><br><span class="line"><span class="comment">	under the License. --&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="keyword">mycat</span>:server <span class="keyword">SYSTEM</span> <span class="string">&quot;server.dtd&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">mycat:server</span> <span class="attr">xmlns:mycat</span>=<span class="string">&quot;http://io.mycat/&quot;</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">system</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;nonePasswordLogin&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span> <span class="comment">&lt;!-- 0为需要密码登陆、1为不需要密码登陆 ,默认为0，设置为1则需要指定默认账户--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;ignoreUnknownCommand&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span><span class="comment">&lt;!-- 0遇上没有实现的报文(Unknown command:),就会报错、1为忽略该报文，返回ok报文。</span></span><br><span class="line"><span class="comment">	在某些mysql客户端存在客户端已经登录的时候还会继续发送登录报文,mycat会报错,该设置可以绕过这个错误--&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useHandshakeV10&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;removeGraveAccent&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useSqlStat&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span>  <span class="comment">&lt;!-- 1为开启实时统计、0为关闭 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useGlobleTableCheck&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span>  <span class="comment">&lt;!-- 1为开启全加班一致性检测、0为关闭 --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sqlExecuteTimeout&quot;</span>&gt;</span>300<span class="tag">&lt;/<span class="name">property</span>&gt;</span>  <span class="comment">&lt;!-- SQL 执行超时 单位:秒--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sequnceHandlerType&quot;</span>&gt;</span>1<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;sequnceHandlerPattern&quot;&gt;(?:(\s*next\s+value\s+for\s*MYCATSEQ_(\w+))(,|\)|\s)*)+&lt;/property&gt;</span></span><br><span class="line"><span class="comment">		INSERT INTO `travelrecord` (`id`,user_id) VALUES (&#x27;next value for MYCATSEQ_GLOBAL&#x27;,&quot;xxx&quot;);</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--必须带有MYCATSEQ_或者 mycatseq_进入序列匹配流程 注意MYCATSEQ_有空格的情况--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sequnceHandlerPattern&quot;</span>&gt;</span>(?:(\s*next\s+value\s+for\s*MYCATSEQ_(\w+))(,|\)|\s)*)+<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;subqueryRelationshipCheck&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">property</span>&gt;</span> <span class="comment">&lt;!-- 子查询中存在关联查询的情况下,检查关联字段中是否有分片字段 .默认 false --&gt;</span></span><br><span class="line"> <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;sequenceHanlderClass&quot;</span>&gt;</span>io.mycat.route.sequence.handler.HttpIncrSequenceHandler<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">      <span class="comment">&lt;!--  &lt;property name=&quot;useCompression&quot;&gt;1&lt;/property&gt;--&gt;</span> <span class="comment">&lt;!--1为开启mysql压缩协议--&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--  &lt;property name=&quot;fakeMySQLVersion&quot;&gt;5.6.20&lt;/property&gt;--&gt;</span> <span class="comment">&lt;!--设置模拟的MySQL版本号--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!-- &lt;property name=&quot;processorBufferChunk&quot;&gt;40960&lt;/property&gt; --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!-- </span></span><br><span class="line"><span class="comment">	&lt;property name=&quot;processors&quot;&gt;1&lt;/property&gt; </span></span><br><span class="line"><span class="comment">	&lt;property name=&quot;processorExecutor&quot;&gt;32&lt;/property&gt; </span></span><br><span class="line"><span class="comment">	 --&gt;</span></span><br><span class="line">        <span class="comment">&lt;!--默认为type 0: DirectByteBufferPool | type 1 ByteBufferArena | type 2 NettyBufferPool --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;processorBufferPoolType&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--默认是65535 64K 用于sql解析时最大文本长度 --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;maxStringLiteralLength&quot;&gt;65535&lt;/property&gt;--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;sequnceHandlerType&quot;&gt;0&lt;/property&gt;--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;backSocketNoDelay&quot;&gt;1&lt;/property&gt;--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;frontSocketNoDelay&quot;&gt;1&lt;/property&gt;--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;processorExecutor&quot;&gt;16&lt;/property&gt;--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">			&lt;property name=&quot;serverPort&quot;&gt;8066&lt;/property&gt; &lt;property name=&quot;managerPort&quot;&gt;9066&lt;/property&gt; </span></span><br><span class="line"><span class="comment">			&lt;property name=&quot;idleTimeout&quot;&gt;300000&lt;/property&gt; &lt;property name=&quot;bindIp&quot;&gt;0.0.0.0&lt;/property&gt;</span></span><br><span class="line"><span class="comment">			&lt;property name=&quot;dataNodeIdleCheckPeriod&quot;&gt;300000&lt;/property&gt; 5 * 60 * 1000L; //连接空闲检查</span></span><br><span class="line"><span class="comment">			&lt;property name=&quot;frontWriteQueueSize&quot;&gt;4096&lt;/property&gt; &lt;property name=&quot;processors&quot;&gt;32&lt;/property&gt; --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--分布式事务开关，0为不过滤分布式事务，1为过滤分布式事务（如果分布式事务内只涉及全局表，则不过滤），2为不过滤分布式事务,但是记录分布式事务日志--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;handleDistributedTransactions&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">   <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">			off heap for merge/order/group/limit      1开启   0关闭</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useOffHeapForMerge&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">			单位为m</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;memoryPageSize&quot;</span>&gt;</span>64k<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">			单位为k</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;spillsFileBufferSize&quot;</span>&gt;</span>1k<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useStreamOutput&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">			单位为m</span></span><br><span class="line"><span class="comment">		--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;systemReserveMemorySize&quot;</span>&gt;</span>384m<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!--是否采用zookeeper协调切换  --&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useZKSwitch&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- XA Recovery Log日志路径 --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;XARecoveryLogBaseDir&quot;&gt;./&lt;/property&gt;--&gt;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">&lt;!-- XA Recovery Log日志名称 --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--&lt;property name=&quot;XARecoveryLogBaseName&quot;&gt;tmlog&lt;/property&gt;--&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--如果为 true的话 严格遵守隔离级别,不会在仅仅只有select语句的时候在事务中切换连接--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;strictTxIsolation&quot;</span>&gt;</span>false<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;useZKSwitch&quot;</span>&gt;</span>true<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--如果为0的话,涉及多个DataNode的catlet任务不会跨线程执行--&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;parallExecute&quot;</span>&gt;</span>0<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">system</span>&gt;</span></span><br><span class="line"> </span><br><span class="line"> <span class="comment">&lt;!-- 全局SQL防火墙设置 --&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--白名单可以使用通配符%或着*--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--例如&lt;host host=&quot;127.0.0.*&quot; user=&quot;root&quot;/&gt;--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--例如&lt;host host=&quot;127.0.*&quot; user=&quot;root&quot;/&gt;--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--例如&lt;host host=&quot;127.*&quot; user=&quot;root&quot;/&gt;--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--例如&lt;host host=&quot;1*7.*&quot; user=&quot;root&quot;/&gt;--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--这些配置情况下对于127.0.0.1都能以root账户登录--&gt;</span></span><br><span class="line"> <span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">	&lt;firewall&gt;</span></span><br><span class="line"><span class="comment">	   &lt;whitehost&gt;</span></span><br><span class="line"><span class="comment">	      &lt;host host=&quot;1*7.0.0.*&quot; user=&quot;root&quot;/&gt;</span></span><br><span class="line"><span class="comment">	   &lt;/whitehost&gt;</span></span><br><span class="line"><span class="comment">       &lt;blacklist check=&quot;false&quot;&gt;</span></span><br><span class="line"><span class="comment">       &lt;/blacklist&gt;</span></span><br><span class="line"><span class="comment">	&lt;/firewall&gt;</span></span><br><span class="line"><span class="comment">	--&gt;</span></span><br><span class="line"></span><br><span class="line"> <span class="tag">&lt;<span class="name">user</span> <span class="attr">name</span>=<span class="string">&quot;root&quot;</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;password&quot;</span>&gt;</span>abc123456<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;schemas&quot;</span>&gt;</span>his<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="tag">&lt;<span class="name">property</span> <span class="attr">name</span>=<span class="string">&quot;defaultSchema&quot;</span>&gt;</span>his<span class="tag">&lt;/<span class="name">property</span>&gt;</span></span><br><span class="line">  <span class="comment">&lt;!--No MyCAT Database selected 错误前会尝试使用该schema作为schema，不设置则为null,报错 --&gt;</span></span><br><span class="line">  </span><br><span class="line">  <span class="comment">&lt;!-- 表级 DML 权限设置 --&gt;</span></span><br><span class="line">  <span class="comment">&lt;!-- 		</span></span><br><span class="line"><span class="comment">		&lt;privileges check=&quot;false&quot;&gt;</span></span><br><span class="line"><span class="comment">			&lt;schema name=&quot;TESTDB&quot; dml=&quot;0110&quot; &gt;</span></span><br><span class="line"><span class="comment">				&lt;table name=&quot;tb01&quot; dml=&quot;0000&quot;&gt;&lt;/table&gt;</span></span><br><span class="line"><span class="comment">				&lt;table name=&quot;tb02&quot; dml=&quot;1111&quot;&gt;&lt;/table&gt;</span></span><br><span class="line"><span class="comment">			&lt;/schema&gt;</span></span><br><span class="line"><span class="comment">		&lt;/privileges&gt;		</span></span><br><span class="line"><span class="comment">		 --&gt;</span></span><br><span class="line"> <span class="tag">&lt;/<span class="name">user</span>&gt;</span></span><br><span class="line"></span><br><span class="line"> <span class="comment">&lt;!-- &lt;user name=&quot;user&quot;&gt;</span></span><br><span class="line"><span class="comment">		&lt;property name=&quot;password&quot;&gt;user&lt;/property&gt;</span></span><br><span class="line"><span class="comment">		&lt;property name=&quot;schemas&quot;&gt;TESTDB&lt;/property&gt;</span></span><br><span class="line"><span class="comment">		&lt;property name=&quot;readOnly&quot;&gt;true&lt;/property&gt;</span></span><br><span class="line"><span class="comment">		&lt;property name=&quot;defaultSchema&quot;&gt;TESTDB&lt;/property&gt;</span></span><br><span class="line"><span class="comment">	&lt;/user&gt; --&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="tag">&lt;/<span class="name">mycat:server</span>&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="3-创建MyCat容器"><a href="#3-创建MyCat容器" class="headerlink" title="3. 创建MyCat容器"></a>3. 创建MyCat容器</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -itd --name mycat -p 8066:8066 -p 9066:9066 \</span><br><span class="line">--net mynet --ip 172.18.0.8 -m 2048m \</span><br><span class="line">-v ./mycat/conf/schema.xml:/usr/local/mycat/conf/schema.xml \</span><br><span class="line">-v ./mycat/conf/server.xml:/usr/local/mycat/conf/server.xml \</span><br><span class="line">-v ./mycat/logs:/usr/local/mycat/logs \</span><br><span class="line">-e TZ=Asia/Shanghai --privileged=<span class="literal">true</span> \</span><br><span class="line">longhronshens/mycat-docker</span><br></pre></td></tr></table></figure>
+
+<h2 id="4-测试MyCat路由SQL语句"><a href="#4-测试MyCat路由SQL语句" class="headerlink" title="4. 测试MyCat路由SQL语句"></a>4. 测试MyCat路由SQL语句</h2><img src="/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image1.png" class="" title="测试MyCat">
+
+<p>我们在MyCat的his逻辑库中随便打开一个数据表，里面的数据展示和操作与普通的MySQL数据表完全是一致的,。<br>但是Java程序要用SQL语句和MyCat打交道，所以我们来看看MyCat转发SQL语句的效果吧。</p>
+<img src="/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image2.png" class="" title="测试MyCat">
+
+<p>我们先在MyCat上面执行一个SQL语句，看看INSERT语句是否能转发给主节点，然后数据同步到其他5个节点。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">INSERT</span> <span class="keyword">INTO</span> tb_system</span><br><span class="line"><span class="keyword">SET</span> id <span class="operator">=</span> <span class="number">3</span>,</span><br><span class="line">    item <span class="operator">=</span> &quot;测试&quot;,</span><br><span class="line">    <span class="keyword">value</span> <span class="operator">=</span> &quot;test&quot;;</span><br></pre></td></tr></table></figure>
+
+<img src="/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image3.png" class="" title="测试MyCat">
+
+<p>接下来我们执行UPDATE语句，看看MyCat是不是依旧能正常转发SQL语句</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">UPDATE</span> tb_system</span><br><span class="line"><span class="keyword">SET</span> <span class="keyword">value</span> <span class="operator">=</span> &quot;test1&quot;</span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">3</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">select</span> <span class="operator">*</span> <span class="keyword">from</span> tb_system;</span><br></pre></td></tr></table></figure>
+
+<h2 id="测试MyCat对故障节点的管理"><a href="#测试MyCat对故障节点的管理" class="headerlink" title="测试MyCat对故障节点的管理"></a>测试MyCat对故障节点的管理</h2><p>上面的几个SQL语句，MyCat都能正常转发给MVSQL节点去执行。下面我们来搞点刺激的，比如说我把6个节点挂掉4个，我看看MCat还能不能正常操作了。当然了，也不能随便挂掉节点。假如两个主节点挂掉了，那么其余4个读节点自然也就用不了，所以我们的MySQL集群最多能支持挂掉1个主节点和3个从节点。比如说我让MySQL 1、MySQL 2、MySQL 3、MySQL 5节点挂掉，仅存MySQL 4和MySQL 6节点。</p>
+<p>我们现在让MyCat执行DELETE语句，看看是不是还能正常运行。如果成功执行了SQL语句，我们一定要去MySQL 4节点查看数据是不是被删除了。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">DELETE</span> <span class="keyword">FROM</span> tb_system</span><br><span class="line"><span class="keyword">WHERE</span> id <span class="operator">=</span> <span class="number">3</span>;</span><br></pre></td></tr></table></figure>
+
+<p>我们让MyCat执行SELECT查询语句，看看仅存的读节点是否还能正常工作。</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> <span class="operator">*</span> <span class="keyword">FROM</span> tb_system;</span><br></pre></td></tr></table></figure>
+
+<p>最后我们把挂掉的4个节点上线，再看看他们的数据同步情况是不是最终达成一致。大家尽可放心，MyCat心跳检测非常的给力，那些宕机的MySQL上线之后，MyCat检测到它们能应答心跳检测之后，就会把SQL语句转发给它</p>
+<h2 id="关于数据库集群读写一致性的思考"><a href="#关于数据库集群读写一致性的思考" class="headerlink" title="关于数据库集群读写一致性的思考"></a>关于数据库集群读写一致性的思考</h2><p>我们使用主从同步机制搭建出来的MySQL集群，属于弱一致性的集群。也就是说在非常特殊的场景下，我们写入的数据和读取出来的数据可能不一致。我把会出现读写不一致的场景归纳出来了，我们一起看一下。</p>
+<h3 id="写入和查询间隔时间太短"><a href="#写入和查询间隔时间太短" class="headerlink" title="写入和查询间隔时间太短"></a>写入和查询间隔时间太短</h3><p>假设我们要执行的INSERT语句发送给了MySQL1节点执行，但是紧接着马上执行了SELECT语句，这个查询语句被MyCat转发给MySQL2执行。假设INSERT和SELECT语句之间的时间间隔短到1毫秒，导致MySQL2还没有同步写入的数据，查询语句就来了，自然是查询不到刚刚插入的数据</p>
+<img src="/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/image4.png" class="" title="测试MyCat">
+
+<p>上面描述的情况属实存在，但是仅限于写入和查询间隔的时间非常短，短到毫秒级别，这个限定条件还是很苛刻的很难达到。</p>
+<h3 id="主从同步失效"><a href="#主从同步失效" class="headerlink" title="主从同步失效"></a>主从同步失效</h3><p>当MySQL1和MySQL2的主从同步失效，MySQL2节点依然能应答MyCat心跳检测，所以MyCat依然认为MySQL 2节点是正常的节点。还是刚才的例子，MySQL 1写入数据后，因为主从同步失效，导致MySQL 2节点上没有新写入的数据，我们也就查询不到刚写入的数据了。那么有没有解决办法呢?我们只能写监控程序，每隔1秒钟执行一次 show slave status 语句，查看结果是不是包含两个YES字样。如果数据同步失效，就立即发送告警邮件，由运维人员及时处理。</p>
+<p>也许有人好奇什么情况会导致主从同步失效?软硬件都有可能，比如说MyCat、MySQL 1和MySQL 2各自处在不同的机房中。MyCat与MySQL1和MySQL 2的网络是通畅的，但是MySQL1和MySQL 2机房之间网络却是不通的，可能是网线断了，也可能是交换机软件的故障。反正网络不通，主从同步自然也就失效了。</p>
+<h2 id="数据库集群强一致性方案"><a href="#数据库集群强一致性方案" class="headerlink" title="数据库集群强一致性方案"></a>数据库集群强一致性方案</h2><p>既然主从同步是弱一致性的数据库集群，那么有没有有强一致性的数据库集群呢?当然有，那就是PXC集群方案。在PXC集群中用的是Percona数据库(MVSQL行生版)，每个Percona节点在写入数据的时候，一定要保证集群中其他节点都成功同步了数据，才算写入成功。如果有任何一个节点数据同步失败，所有节点就会回滚事物，删除刚刚同步的数据。想要了解PXC集群方案的同学，可以看我那门《Docker环境下的前后端分离部署与运维》实战课，肯定会让你打开认知的新领域。</p>
+<p>既然PXC集群能保证所有节点数据的一致性，为什么我们不用PXC集群方案呢?数据强一致性是以牺牲写入性能为代价的。每次写入数据都要等待其他节点同步数据成功，势必延长了写入的时间。如果PXC集群的Percona节点越多，同步数据的时间也就越长。因此PXC集群有个铁律:节点数量不应该超过15个。这个数量级的MySQL集群，应对高并发的情况压力还是很大的，除非金融领域对数据的一致性非常看重之外，宁愿牺牲读写性能也要保证数据的一致性，其他领域的项目更倾向于有一个快速读写的速度。即便出现了数据读写不一致的小概率事件，可以由客服先安抚客户，赠与代金券，然后让技术人员去解决故障。</p>
+<p>其实呢，就算淘宝和京东这样的电商巨头也没法保证数据的读写一致性。咱们抛开主从同步和PXC集群不谈，电商网站和银行系统有各自的数据库系统。这就会导致电商项目和银行系统分别处在不同的数据库事务中，没法做到体式的回滚，所以可能会出现银行数据库已经回滚了，但是电商网站的数据库没有回滚，数据也就不一致了。最后还是得由技术人员出马解决，所以也就不用纠结数据不一致这个小概率事件了。程序员解决不了的事情，就交给客服和运维去处理吧。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2024/11/30/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(1)/" rel="prev" title="Java学习笔记（1） - MySQL集群">
+      <i class="fa fa-chevron-left"></i> Java学习笔记（1） - MySQL集群
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2024/12/08/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-%E6%90%AD%E5%BB%BA%E5%85%B6%E4%BD%99%E5%90%8E%E7%AB%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" rel="next" title="java学习笔记(3)-搭建其余后端中间件">
+      java学习笔记(3)-搭建其余后端中间件 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-%E5%AE%89%E8%A3%85MyCat"><span class="nav-number">1.</span> <span class="nav-text">1. 安装MyCat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-%E9%85%8D%E7%BD%AEMyCat"><span class="nav-number">2.</span> <span class="nav-text">2. 配置MyCat</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-%E5%88%9B%E5%BB%BAMyCat%E5%AE%B9%E5%99%A8"><span class="nav-number">3.</span> <span class="nav-text">3. 创建MyCat容器</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-%E6%B5%8B%E8%AF%95MyCat%E8%B7%AF%E7%94%B1SQL%E8%AF%AD%E5%8F%A5"><span class="nav-number">4.</span> <span class="nav-text">4. 测试MyCat路由SQL语句</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B5%8B%E8%AF%95MyCat%E5%AF%B9%E6%95%85%E9%9A%9C%E8%8A%82%E7%82%B9%E7%9A%84%E7%AE%A1%E7%90%86"><span class="nav-number">5.</span> <span class="nav-text">测试MyCat对故障节点的管理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B3%E4%BA%8E%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E8%AF%BB%E5%86%99%E4%B8%80%E8%87%B4%E6%80%A7%E7%9A%84%E6%80%9D%E8%80%83"><span class="nav-number">6.</span> <span class="nav-text">关于数据库集群读写一致性的思考</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%86%99%E5%85%A5%E5%92%8C%E6%9F%A5%E8%AF%A2%E9%97%B4%E9%9A%94%E6%97%B6%E9%97%B4%E5%A4%AA%E7%9F%AD"><span class="nav-number">6.1.</span> <span class="nav-text">写入和查询间隔时间太短</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BB%E4%BB%8E%E5%90%8C%E6%AD%A5%E5%A4%B1%E6%95%88"><span class="nav-number">6.2.</span> <span class="nav-text">主从同步失效</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E5%BA%93%E9%9B%86%E7%BE%A4%E5%BC%BA%E4%B8%80%E8%87%B4%E6%80%A7%E6%96%B9%E6%A1%88"><span class="nav-number">7.</span> <span class="nav-text">数据库集群强一致性方案</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rywen</p>
+  <div class="site-description" itemprop="description">生活不止眼前的苟且，还有诗和远方.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">14</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2024</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rywen</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
