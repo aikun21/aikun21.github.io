@@ -206,7 +206,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2024-12-21 19:40:13 / 修改时间：19:56:56" itemprop="dateCreated datePublished" datetime="2024-12-21T19:40:13+08:00">2024-12-21</time>
+              <time title="创建时间：2024-12-21 19:40:13 / 修改时间：23:39:16" itemprop="dateCreated datePublished" datetime="2024-12-21T19:40:13+08:00">2024-12-21</time>
             </span>
 
           
@@ -220,12 +220,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2><img src="/2024/12/21/%E5%88%9B%E5%BB%BA-spring-boot-%E9%A1%B9%E7%9B%AE/image1.png" class="" title="思维导图">
-
-<h3 id="利用Maven创建SpringBoot项目"><a href="#利用Maven创建SpringBoot项目" class="headerlink" title="利用Maven创建SpringBoot项目"></a>利用Maven创建SpringBoot项目</h3><p>在IDEA工具上面新建SpringBoot项目，项目的名称为 <code>his-api</code> 需要注意Java语法版本没有15，所以我们选择低版本的JDK语法，后续在 pom.xml文件中改成JDK15语法即可。</p>
-<img src="/2024/12/21/%E5%88%9B%E5%BB%BA-spring-boot-%E9%A1%B9%E7%9B%AE/image2.png" class="" title="创建SpringBoot项目">
-
-
+          <h2 id="思维导图"><a href="#思维导图" class="headerlink" title="思维导图"></a>思维导图</h2>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/12/21/%E5%88%9B%E5%BB%BA-spring-boot-%E9%A1%B9%E7%9B%AE/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -275,7 +278,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-20 21:40:39" itemprop="dateModified" datetime="2024-12-20T21:40:39+08:00">2024-12-20</time>
+                <time title="修改时间：2024-12-21 23:39:36" itemprop="dateModified" datetime="2024-12-21T23:39:36+08:00">2024-12-21</time>
               </span>
 
           
@@ -290,31 +293,14 @@
 
       
           <p>攻克了数据库集群这一关，接下来轮到Redis、MongoDB、RabbitMQ这几个中间件了。我们依旧还是用Docker环境来创建这些中间件的容器。不得不说有了Docker环境，我们搭建后端这些中间件真的是非常方便。</p>
-<h2 id="创建Redis容器"><a href="#创建Redis容器" class="headerlink" title="创建Redis容器"></a>创建Redis容器</h2><p>用Redis缓存Token令牌和一些业务数据。创建容器:</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name redis -p 6379:6379 redis:6.2.6</span><br></pre></td></tr></table></figure>
-
-<p>本地创建 <code>redis.conf</code> 配置文件，然后添加如下内容。如果你用的是云主机，强烈建议你给Redis设置的密码又长有复杂一些。因为黑客经常会黑掉云主机的Redis，然后注入挖矿脚本，云主机的CPU负载就会飙升到100%，影响云主机的正常使用。为了避免Redis密码不被轻易破解，所以密码还是复杂一些吧。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">bind</span> 0.0.0.0</span><br><span class="line">protected-mode <span class="built_in">yes</span></span><br><span class="line">port 6379</span><br><span class="line">tcp-backlog 511</span><br><span class="line"><span class="built_in">timeout</span> 0</span><br><span class="line">tcp-keepalive 0</span><br><span class="line">loglevel notice</span><br><span class="line">logfile <span class="string">&quot;&quot;</span></span><br><span class="line">databases 4</span><br><span class="line">save 900 1</span><br><span class="line">save 300 10</span><br><span class="line">save 60 10000</span><br><span class="line">stop-writes-on-bgsave-error <span class="built_in">yes</span></span><br><span class="line">rdbcompression <span class="built_in">yes</span></span><br><span class="line">rdbchecksum <span class="built_in">yes</span></span><br><span class="line">dbfilename dump.rdb</span><br><span class="line"><span class="built_in">dir</span> ./</span><br><span class="line">requirepass abc123456</span><br></pre></td></tr></table></figure>
-
-<p>执行命令，创建Redis容器，然后用Redis客户端连接CentOS系统的6379端口。因为Redis是缓存数据，既然数据都是临时的，所以我们就不必把Redis数据文件映射到CentOS系统上面。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">docker run -it -d --name redis -p 6379:6379 \</span><br><span class="line">--net mynet --ip 172.18.0.9 -m 400m \</span><br><span class="line">-v ./redis/conf:/etc/redis \</span><br><span class="line">-e TZ=Asia/Shanghai \</span><br><span class="line">redis:6.2.6 redis-server /etc/redis/redis.conf</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建MongoDB容器"><a href="#创建MongoDB容器" class="headerlink" title="创建MongoDB容器"></a>创建MongoDB容器</h2><p>用MongoDB数据库存储商品快照。什么是商品快照。比如说订单记录直接关联商品id，如果你买的是苹果手机。店家修改了商品信息，苹果手机变成了小米手机，那么我们用表连接查询出来的该订单买的就是小米手机，你觉得你能容忍么?肯定不能。为了避免店家修改商品信息影响到已有的订单，所以在项目中引入了商品快照。简单的说，就是店家每次修改商品信息，都会产生一个商品快照记录。买家的订单关联的是快照记录ID。店家不管怎么修改商品信息，都只生成新的快照记录，但是该订单关联的原有快照记录是不会改变的。其实具体过程要比这复杂很多，等我们写到这部分代码的时候，我再详细说明。</p>
-<p>由于店家修改商品记录会产生新的快照记录，那么日积月累下来快照表保存的记录就会很多，所以用MVSOL保存快照记录就不太适合了。我们可以用MongoDB或者HBase来存储。这两个数据库都适合保存海量数据，MongoDB可以存储TB级别的数据，HBase更是可以保存PB级别的记录。至于它们两个该选哪一个也是有参考标准的。如果需要对保存的数据做复杂条件查询，建议用HBase数据库。HBase挂载了Phoenix之后，可以支持SQL语句，各种复杂的CRUD操作都不在话下。由于MongoDB不支持SQL语句，所以MongoDB只适合数据的简单读写，太复杂的查询条件是不可以的。因为本课程保存的商品快照，需要的查询条件并不复杂，所以用MongoDB就够了。</p>
-<p>创建 <code>mongodb/conf/mongod.conf</code> 文件，填入配置信息。</p>
-<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">net:</span></span><br><span class="line">  <span class="string">port:27017</span></span><br><span class="line">  <span class="string">bindIp:&quot;0.0.0.0&quot;</span></span><br><span class="line"><span class="comment"># storage:</span></span><br><span class="line"><span class="comment">#   dbPath:&quot;/data/db&quot;</span></span><br><span class="line"><span class="attr">security:</span></span><br><span class="line">  <span class="string">authorization:enabled</span></span><br></pre></td></tr></table></figure>
-
-<p>执行命令，创建MongoDB容器。分配的内存上限是500M，而且数据目录要映射到CentOS系统。容器创建成功之后，在Navicat上面创建MongoDB连接，访问CentOS的27017端口。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">docker run -d --name mongodb -p 27017:27017 \</span><br><span class="line">--net mynet --ip 172.18.0.10 -m 800m \</span><br><span class="line">-v ./mongodb/conf:/etc/mongodb \</span><br><span class="line">-v ./mongodb/data:/data/db \</span><br><span class="line">-e MONGO_INITDB_ROOT_USERNAME=admin \</span><br><span class="line">-e MONGO_INITDB_ROOT_PASSWORD=abc123456 \</span><br><span class="line">-e TZ=Asia/Shanghai \</span><br><span class="line">mongo:4.4.7 mongod --config /etc/mongodb/mongod.conf</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建RabbitMQ容器"><a href="#创建RabbitMQ容器" class="headerlink" title="创建RabbitMQ容器"></a>创建RabbitMQ容器</h2><p>使用RabbitMQ实现系统之间的数据传递，比如说某个医疗设备的检测结果想要发送给咱们的体检系统，可以向RabbitMQ的队列发送消息，我们的体检系统从RabbitMQ队列中获取消息，然后把体检数据保存到数据库里面。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">docker run -it -d --name mq \</span><br><span class="line">-p 4369:4369 -p 5671:5671 -p 5672:5672 \</span><br><span class="line">--net mynet --ip 172.18.0.11 -m 400m \</span><br><span class="line">-e RABBITMQ_DEFAULT_USER=admin \</span><br><span class="line">-e RABBITMQ_DEFAULT_PASS=abc123456 \</span><br><span class="line">-e TZ=Asia/Shanghai \</span><br><span class="line">rabbitmq:3.8.9</span><br></pre></td></tr></table></figure>
-
-<h2 id="创建minio容器"><a href="#创建minio容器" class="headerlink" title="创建minio容器"></a>创建minio容器</h2><p>用Minio来保存文件。Minio是亚马逊S3的开源替代品，可以保存TB级别的文件。Minio的安装和配置非常简单，直接用Docker安装即可。</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chmod</span> -R 777 /root/minio/data/</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">docker run -it -d --name minio_jk \</span><br><span class="line">-p 9000:9000 -p 9001:9001 \</span><br><span class="line">--net mynet --ip 172.18.0.12 -m 400m \</span><br><span class="line">-v ./minio/data:/data \</span><br><span class="line">-e TZ=Asia/Shanghai --privileged=<span class="literal">true</span> \</span><br><span class="line">--<span class="built_in">env</span> MINIO_ROOT_USER=<span class="string">&quot;root&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> MINIO_ROOT_PASSWORD=<span class="string">&quot;abc123456&quot;</span> \</span><br><span class="line">--<span class="built_in">env</span> MINIO_SKIP_CLIENT=<span class="string">&quot;yes&quot;</span> \  <span class="comment"># 在断网的情况下，也能正常访问</span></span><br><span class="line">minio/minio server /data --console-address <span class="string">&quot;:9001&quot;</span> --address <span class="string">&quot;:9000&quot;</span></span><br></pre></td></tr></table></figure>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/12/08/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-%E6%90%AD%E5%BB%BA%E5%85%B6%E4%BD%99%E5%90%8E%E7%AB%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
