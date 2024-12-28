@@ -8,6 +8,8 @@ tags:
 
 攻克了数据库集群这一关，接下来轮到Redis、MongoDB、RabbitMQ这几个中间件了。我们依旧还是用Docker环境来创建这些中间件的容器。不得不说有了Docker环境，我们搭建后端这些中间件真的是非常方便。
 
+<!-- more -->
+
 ## 创建Redis容器
 
 用Redis缓存Token令牌和一些业务数据。创建容器:
