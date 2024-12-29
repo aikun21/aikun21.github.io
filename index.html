@@ -181,6 +181,413 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E5%88%9B%E5%BB%BA%E8%87%AA%E7%AD%BE%E5%90%8DHTTPS%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-13/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E5%88%9B%E5%BB%BA%E8%87%AA%E7%AD%BE%E5%90%8DHTTPS%E6%95%B0%E5%AD%97%E8%AF%81%E4%B9%A6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-13/" class="post-title-link" itemprop="url">创建自签名HTTPS数字证书-java学习笔记(13)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-29 19:50:06 / 修改时间：21:34:36" itemprop="dateCreated datePublished" datetime="2024-12-29T19:50:06+08:00">2024-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>也许有的同学觉得前后端项目都部署在同一台服务器主机上面，前后端项目之间不需要使用HTTPS协议，其实不然。如果前后端项目都部署在同一台主机上面，该主机的负载会偏大，所以通常的做法是把前后端项目部署在不同主机上面。这种情况下，局域网之内的数据传输也应该加密，所以给后端项目配置HTTPS协议是必要的。</p>
+<p>开通HTTPS协议需要使用数字证书，然而申请数字证书需要有公网域名。目前大健康项目处在开发阶段，我们可以自己创建一个数字证书，开通HTTPS协议。将来我们的项目上线的时候，再去申请正式的数字证书就行了。</p>
+<p>在命令行界面执行下面的指令，生成一个365天有效期的数字证书文件。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">keytool -genkey -<span class="built_in">alias</span> jetty -dname CN=demo,OU=demo,O=demo,L=SHH,ST=SHH,C=CN -storetype PKCS12 -keyalg RSA -keysize 2048 -validity 365 -keystore jetty.p12</span><br></pre></td></tr></table></figure>
+
+<p>将生成的数字证书文件复制到项目的resources目录中，然后在application.yml文件中，配置数字证书文件的路径。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">server:</span></span><br><span class="line">  <span class="attr">ssl:</span></span><br><span class="line">    <span class="attr">enabled:</span> <span class="literal">true</span></span><br><span class="line">    <span class="attr">key-store-type:</span> <span class="string">PKCS12</span></span><br><span class="line">    <span class="attr">key-store:</span> <span class="string">classpath:jetty.p12</span></span><br><span class="line">    <span class="attr">key-store-password:</span> <span class="string">abc123456</span></span><br></pre></td></tr></table></figure>
+
+<p>打开浏览器访问Web方法，访问 <a target="_blank" rel="noopener" href="https://localhost:7700/his-api/test/xss">https://localhost:7700/his-api/test/xss</a> 地址。能看到如下的画面。<br>因为是自签名的数字证书，不被浏览器认可，需要我们手动允许浏览器信任该数字证书。</p>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E8%87%AA%E5%AE%9A%E4%B9%89RESTfUI%E7%BB%93%E6%9E%9C%E9%9B%86%E5%B0%81%E8%A3%85%E7%B1%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-12/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E8%87%AA%E5%AE%9A%E4%B9%89RESTfUI%E7%BB%93%E6%9E%9C%E9%9B%86%E5%B0%81%E8%A3%85%E7%B1%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-12/" class="post-title-link" itemprop="url">自定义RESTfUI结果集封装类-java学习笔记(12)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-29 19:33:23 / 修改时间：19:43:20" itemprop="dateCreated datePublished" datetime="2024-12-29T19:33:23+08:00">2024-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>我们将来要写很多Web方法，而且这些方法都要向前端返回JSON格式的数据。那么我们能不能约定好JSON对象中的公共属性呢?</p>
+<p>因为Controller类用上 <code>@RestController</code> 注解之后，Web方法返回的对象会被自动转换成JSON对象，所以我们只需要声明一个封装类，让所有Web方法返回这个封装类的对象即可。除了公共属性之外，不同的Web方法要返回的业务数据也不尽相同，所以选择动态的结构才是最佳的方案，恰好HashMap允许我们随便添加数据，那就选择HashMap作为父类吧。在 com.jiang.his.common 包中，创建 R.java 类。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.common;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.EqualsAndHashCode;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> cn.hutool.http.HttpStatus;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 通用返回结果</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode(callSuper = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">R</span> <span class="keyword">extends</span> <span class="title class_">HashMap</span>&lt;String, Object&gt; &#123;</span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">R</span><span class="params">()</span> &#123;</span><br><span class="line">        put(<span class="string">&quot;code&quot;</span>, HttpStatus.HTTP_OK);</span><br><span class="line">        put(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;success&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 覆盖继承的put方法</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> R <span class="title function_">put</span><span class="params">(String key, Object value)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>.put(key, value);</span><br><span class="line">        <span class="keyword">return</span> <span class="built_in">this</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> R <span class="title function_">ok</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">R</span>();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> R <span class="title function_">ok</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="type">R</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">R</span>();</span><br><span class="line">        r.put(<span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> R <span class="title function_">ok</span><span class="params">(Object data)</span> &#123;</span><br><span class="line">        <span class="type">R</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">R</span>();</span><br><span class="line">        r.put(<span class="string">&quot;data&quot;</span>, data);</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> R <span class="title function_">error</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> error(HttpStatus.HTTP_INTERNAL_ERROR, <span class="string">&quot;未知异常，请联系管理员&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> R <span class="title function_">error</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> error(HttpStatus.HTTP_INTERNAL_ERROR, message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> R <span class="title function_">error</span><span class="params">(<span class="type">int</span> code, String message)</span> &#123;</span><br><span class="line">        <span class="type">R</span> <span class="variable">r</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">R</span>();</span><br><span class="line">        r.put(<span class="string">&quot;code&quot;</span>, code);</span><br><span class="line">        r.put(<span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">        <span class="keyword">return</span> r;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> R <span class="title function_">data</span><span class="params">(Object value)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> put(<span class="string">&quot;data&quot;</span>, value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> R <span class="title function_">message</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> put(<span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> R <span class="title function_">code</span><span class="params">(Integer code)</span> &#123;</span><br><span class="line">        <span class="keyword">return</span> put(<span class="string">&quot;code&quot;</span>, code);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E9%85%8D%E7%BD%AEThreadPool-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E9%85%8D%E7%BD%AEThreadPool-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11/" class="post-title-link" itemprop="url">配置ThreadPool-java学习笔记(11)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-29 19:15:38 / 修改时间：19:32:25" itemprop="dateCreated datePublished" datetime="2024-12-29T19:15:38+08:00">2024-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>给后端Java项目添加线程池功能，将来有些复杂耗时的任务，我们可以交给线程池去做。比如说生成体检报告这种事情就非常耗时，如果用上了线程池，每天的体检报告用多线程去生成，速度肯定比单线程快很多。</p>
+<p>在com.jiang.his.config包中，创建 ThreadPoolConfig.java 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.annotation.EnableAsync;</span><br><span class="line"><span class="keyword">import</span> org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.Executor;</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.ThreadPoolExecutor;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 线程池配置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="meta">@EnableAsync</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">ThreadPoolConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 核心线程数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">CORE_POOL_SIZE</span> <span class="operator">=</span> <span class="number">8</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 最大线程数</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">MAX_POOL_SIZE</span> <span class="operator">=</span> <span class="number">16</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 队列容量</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">QUEUE_CAPACITY</span> <span class="operator">=</span> <span class="number">1000</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 线程空闲时间</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">int</span> <span class="variable">KEEP_ALIVE_SECONDS</span> <span class="operator">=</span> <span class="number">60</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 线程名前缀</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">THREAD_NAME_PREFIX</span> <span class="operator">=</span> <span class="string">&quot;his-async-&quot;</span>;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean(&quot;asyncTaskExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> Executor <span class="title function_">asyncTaskExecutor</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="type">ThreadPoolTaskExecutor</span> <span class="variable">executor</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ThreadPoolTaskExecutor</span>();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 核心线程数：线程池创建时候初始化的线程数</span></span><br><span class="line">        executor.setCorePoolSize(CORE_POOL_SIZE);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 最大线程数：线程池最大的线程数，只有在缓冲队列满了之后才会申请超过核心线程数的线程</span></span><br><span class="line">        executor.setMaxPoolSize(MAX_POOL_SIZE);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 缓冲队列：用来缓冲执行任务的队列</span></span><br><span class="line">        executor.setQueueCapacity(QUEUE_CAPACITY);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 允许线程的空闲时间：超过了核心线程数之外的线程，在空闲时间到达之后会被销毁</span></span><br><span class="line">        executor.setKeepAliveSeconds(KEEP_ALIVE_SECONDS);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 线程池名的前缀：设置好了之后可以方便定位处理任务所在的线程池</span></span><br><span class="line">        executor.setThreadNamePrefix(THREAD_NAME_PREFIX);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 缓冲队列满了之后的拒绝策略：由调用线程处理（一般是主线程）</span></span><br><span class="line">        executor.setRejectedExecutionHandler(<span class="keyword">new</span> <span class="title class_">ThreadPoolExecutor</span>.CallerRunsPolicy());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 初始化线程池</span></span><br><span class="line">        executor.initialize();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> executor;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="拒绝策略"><a href="#拒绝策略" class="headerlink" title="拒绝策略"></a>拒绝策略</h2><h3 id="AbortPolicy策略"><a href="#AbortPolicy策略" class="headerlink" title="AbortPolicy策略"></a>AbortPolicy策略</h3><p>直接抛出RejectedExecutionException异常，属于线程池默认的拒绝方案。</p>
+<h3 id="CallerRunsPolicy策略"><a href="#CallerRunsPolicy策略" class="headerlink" title="CallerRunsPolicy策略"></a>CallerRunsPolicy策略</h3><p>线程池拒绝执行，反而推给主线程去执行任务，可以保证线程任务一定能执行，而不是随便放弃。比如说生成体检报告，如果线程池放弃任务，就意味着某个体检报告无法生成，这肯定是不行的。</p>
+<h3 id="DiscardOldestPolicy策略"><a href="#DiscardOldestPolicy策略" class="headerlink" title="DiscardOldestPolicy策略"></a>DiscardOldestPolicy策略</h3><p>丢弃队列中最早的未处理任务，然后尝试重新执行任务。</p>
+<h3 id="DiscardPolicy策略"><a href="#DiscardPolicy策略" class="headerlink" title="DiscardPolicy策略"></a>DiscardPolicy策略</h3><p>直接丢弃任务，不予任何处理也不抛出异常。</p>
+<h2 id="开启异步线程"><a href="#开启异步线程" class="headerlink" title="开启异步线程"></a>开启异步线程</h2><p>通常我们使用线程池的时候需要我们自己往线程池里面添加任务，但是SpringBoot提供了异步线程技术，我们规定好任务类，SpringBoot会把任务对象交给线程池去执行。之所以叫做异步线程，是因为线程池中的线程相对于主线程来说就是异步的:主线程把任务推给线程池，然后就继续往下做别的事情了，并不会等待线程池的执行结果，所以是一种异步的效果。</p>
+<p>在 HisApiApplication.java 主类的声明中，添加上 @EnableAsync 注解，就可以开启异步线程功能了</p>
+<p>将来我们想要使用异步线程功能的时候，需要自己创建一个任务类，然后给里面的方法添加上 @Async ，那么这个方法将会推给线程池的空闲线程去执行，也就意味着生成体检报告这种耗时费力的事情已经脱离主线程了。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Service</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">AsyncService</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Async(&quot;asyncTaskExecutor&quot;)</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">asyncTask</span><span class="params">()</span> &#123;</span><br><span class="line">        System.out.println(<span class="string">&quot;异步线程执行任务&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E5%85%A8%E5%B1%80%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8%E5%B9%B6%E5%A4%84%E7%90%86-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E5%85%A8%E5%B1%80%E6%8D%95%E8%8E%B7%E5%BC%82%E5%B8%B8%E5%B9%B6%E5%A4%84%E7%90%86-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10/" class="post-title-link" itemprop="url">全局捕获异常并处理-java学习笔记(10)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-29 11:51:27 / 修改时间：19:15:16" itemprop="dateCreated datePublished" datetime="2024-12-29T11:51:27+08:00">2024-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="自定义异常类"><a href="#自定义异常类" class="headerlink" title="自定义异常类"></a>自定义异常类</h2><p>Java语言允许我们自己封装异常类，我们可以自定义各种异常类，比如每种业务一个异常类，或者每个模块一个异常类。我这里不想做的那么复杂，不如我们创建一个通用的异常类，用来封装与业务有关的异常信息。</p>
+<p>在com.jiang.his.exception包中，创建 HisException.java 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.exception;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"><span class="keyword">import</span> lombok.EqualsAndHashCode;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 自定义异常</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@EqualsAndHashCode(callSuper = true)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HisException</span> <span class="keyword">extends</span> <span class="title class_">RuntimeException</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">long</span> <span class="variable">serialVersionUID</span> <span class="operator">=</span> <span class="number">1L</span>;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 错误码</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> Integer code;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 错误信息</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String message;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">HisException</span><span class="params">(String message)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message);</span><br><span class="line">        <span class="built_in">this</span>.message = message;</span><br><span class="line">        <span class="built_in">this</span>.code = <span class="number">500</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">HisException</span><span class="params">(Integer code, String message)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message);</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">HisException</span><span class="params">(String message, Throwable e)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message, e);</span><br><span class="line">        <span class="built_in">this</span>.message = message;</span><br><span class="line">        <span class="built_in">this</span>.code = <span class="number">500</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">HisException</span><span class="params">(Integer code, String message, Throwable e)</span> &#123;</span><br><span class="line">        <span class="built_in">super</span>(message, e);</span><br><span class="line">        <span class="built_in">this</span>.code = code;</span><br><span class="line">        <span class="built_in">this</span>.message = message;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="全局异常处理"><a href="#全局异常处理" class="headerlink" title="全局异常处理"></a>全局异常处理</h2><p>SpringBoot提供了全局处理异常的技术，只要我们给某个java类用上 @RestcontrollerAdvice 注解，这个类就能捕获SpringBoot项目中所有的异常，然后统一处理(精简异常信息)再返回给前端项目。</p>
+<p>在com.jiang.his.exception包中，创建 GlobalExceptionHandler.java 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jiang.his.exception.HisException;</span><br><span class="line"><span class="keyword">import</span> cn.dev33.satoken.exception.NotLoginException;</span><br><span class="line"><span class="keyword">import</span> cn.hutool.json.JSONObject;</span><br><span class="line"><span class="keyword">import</span> lombok.extern.slf4j.Slf4j;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.HttpStatus;</span><br><span class="line"><span class="keyword">import</span> org.springframework.http.converter.HttpMessageNotReadableException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.validation.BindException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.HttpRequestMethodNotSupportedException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.MethodArgumentNotValidException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.annotation.*;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.multipart.support.MissingServletRequestPartException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.NoHandlerFoundException;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.bind.MissingServletRequestParameterException;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.validation.ConstraintViolationException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 全局异常处理器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Slf4j</span></span><br><span class="line"><span class="meta">@RestControllerAdvice</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GlobalExceptionHandler</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理404错误</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.NOT_FOUND)</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(NoHandlerFoundException.class)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handle404Error</span><span class="params">(NoHandlerFoundException e)</span> &#123;</span><br><span class="line">        log.error(<span class="string">&quot;资源不存在: &#123;&#125;&quot;</span>, e.getRequestURL(), e);</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">json</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        json.set(<span class="string">&quot;code&quot;</span>, HttpStatus.NOT_FOUND.value());</span><br><span class="line">        json.set(<span class="string">&quot;message&quot;</span>, String.format(<span class="string">&quot;接口 [%s] 不存在&quot;</span>, e.getRequestURL()));</span><br><span class="line">        <span class="keyword">return</span> json.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理401未授权错误</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.UNAUTHORIZED)</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(NotLoginException.class)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handle401Error</span><span class="params">(NotLoginException e)</span> &#123;</span><br><span class="line">        log.error(<span class="string">&quot;未授权: &#123;&#125;&quot;</span>, e.getMessage(), e);</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">json</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        json.set(<span class="string">&quot;code&quot;</span>, HttpStatus.UNAUTHORIZED.value());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 根据Sa-Token的异常类型返回具体信息</span></span><br><span class="line">        String message;</span><br><span class="line">        <span class="keyword">if</span> (e.getType().equals(NotLoginException.NOT_TOKEN)) &#123;</span><br><span class="line">            message = <span class="string">&quot;请求未携带token&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e.getType().equals(NotLoginException.INVALID_TOKEN)) &#123;</span><br><span class="line">            message = <span class="string">&quot;token无效或已被篡改&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e.getType().equals(NotLoginException.TOKEN_TIMEOUT)) &#123;</span><br><span class="line">            message = <span class="string">&quot;token已过期&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e.getType().equals(NotLoginException.BE_REPLACED)) &#123;</span><br><span class="line">            message = <span class="string">&quot;token已在其他设备登录&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e.getType().equals(NotLoginException.KICK_OUT)) &#123;</span><br><span class="line">            message = <span class="string">&quot;token已被强制下线&quot;</span>;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            message = <span class="string">&quot;当前会话未登录&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        json.set(<span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">        <span class="keyword">return</span> json.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理400参数错误</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.BAD_REQUEST)</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(&#123;MethodArgumentNotValidException.class, BindException.class, ConstraintViolationException.class&#125;)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handle400Error</span><span class="params">(Exception e)</span> &#123;</span><br><span class="line">        String message;</span><br><span class="line">        <span class="keyword">if</span> (e <span class="keyword">instanceof</span> MethodArgumentNotValidException) &#123;</span><br><span class="line">            <span class="type">MethodArgumentNotValidException</span> <span class="variable">ex</span> <span class="operator">=</span> (MethodArgumentNotValidException) e;</span><br><span class="line">            message = String.format(<span class="string">&quot;参数校验失败: %s&quot;</span>, </span><br><span class="line">                ex.getBindingResult().getAllErrors().get(<span class="number">0</span>).getDefaultMessage());</span><br><span class="line">            log.error(<span class="string">&quot;参数校验失败: &#123;&#125;&quot;</span>, ex.getBindingResult().getAllErrors(), e);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> BindException) &#123;</span><br><span class="line">            <span class="type">BindException</span> <span class="variable">ex</span> <span class="operator">=</span> (BindException) e;</span><br><span class="line">            message = String.format(<span class="string">&quot;参数绑定失败: %s&quot;</span>, </span><br><span class="line">                ex.getBindingResult().getAllErrors().get(<span class="number">0</span>).getDefaultMessage());</span><br><span class="line">            log.error(<span class="string">&quot;参数绑定失败: &#123;&#125;&quot;</span>, ex.getBindingResult().getAllErrors(), e);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> ConstraintViolationException) &#123;</span><br><span class="line">            <span class="type">ConstraintViolationException</span> <span class="variable">ex</span> <span class="operator">=</span> (ConstraintViolationException) e;</span><br><span class="line">            message = String.format(<span class="string">&quot;参数约束失败: %s&quot;</span>, ex.getMessage());</span><br><span class="line">            log.error(<span class="string">&quot;参数约束失败: &#123;&#125;&quot;</span>, ex.getConstraintViolations(), e);</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            message = String.format(<span class="string">&quot;参数错误: %s&quot;</span>, e.getMessage());</span><br><span class="line">            log.error(<span class="string">&quot;参数错误&quot;</span>, e);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">json</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        json.set(<span class="string">&quot;code&quot;</span>, HttpStatus.BAD_REQUEST.value());</span><br><span class="line">        json.set(<span class="string">&quot;message&quot;</span>, message);</span><br><span class="line">        <span class="keyword">return</span> json.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理自定义业务异常</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(HisException.class)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handleBusinessError</span><span class="params">(HisException e)</span> &#123;</span><br><span class="line">        log.error(<span class="string">&quot;业务异常: &#123;&#125;&quot;</span>, e.getMessage(), e);</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">json</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        json.set(<span class="string">&quot;code&quot;</span>, e.getCode());</span><br><span class="line">        json.set(<span class="string">&quot;message&quot;</span>, e.getMessage());</span><br><span class="line">        <span class="keyword">return</span> json.toString();</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 处理500系统错误</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@ResponseBody</span></span><br><span class="line">    <span class="meta">@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)</span></span><br><span class="line">    <span class="meta">@ExceptionHandler(Exception.class)</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">handle500Error</span><span class="params">(Exception e)</span> &#123;</span><br><span class="line">        <span class="type">JSONObject</span> <span class="variable">json</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">JSONObject</span>();</span><br><span class="line">        json.set(<span class="string">&quot;code&quot;</span>, HttpStatus.INTERNAL_SERVER_ERROR.value());</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">if</span> (e <span class="keyword">instanceof</span> HttpRequestMethodNotSupportedException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;请求方法不支持&quot;</span>, e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;请求方法不支持&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> HttpMessageNotReadableException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;请求参数解析失败&quot;</span>, e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;请求参数解析失败&quot;</span>);  </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span>(e <span class="keyword">instanceof</span> BindException) &#123;</span><br><span class="line">            <span class="type">BindException</span> <span class="variable">ex</span> <span class="operator">=</span> (BindException) e;</span><br><span class="line">            log.error(<span class="string">&quot;请求参数绑定失败&quot;</span>, ex);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, ex.getBindingResult().getAllErrors().get(<span class="number">0</span>).getDefaultMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> MissingServletRequestParameterException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;请求参数缺失&quot;</span>, e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;请求参数缺失&quot;</span>);  </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> MethodArgumentNotValidException) &#123;</span><br><span class="line">            <span class="type">MethodArgumentNotValidException</span> <span class="variable">ex</span> <span class="operator">=</span> (MethodArgumentNotValidException) e;</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, ex.getBindingResult().getAllErrors().get(<span class="number">0</span>).getDefaultMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> MissingServletRequestPartException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;请求体缺失&quot;</span>, e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;请求体缺失&quot;</span>);  </span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> NullPointerException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;空指针异常&quot;</span>, e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;系统出现空指针异常&quot;</span>);</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> IllegalArgumentException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;非法参数: &#123;&#125;&quot;</span>, e.getMessage(), e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;非法的参数: &quot;</span> + e.getMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> IllegalStateException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;非法状态: &#123;&#125;&quot;</span>, e.getMessage(), e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;非法的状态: &quot;</span> + e.getMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> <span class="keyword">if</span> (e <span class="keyword">instanceof</span> HisException) &#123;</span><br><span class="line">            log.error(<span class="string">&quot;业务异常: &#123;&#125;&quot;</span>, e.getMessage(), e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, e.getMessage());</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            log.error(<span class="string">&quot;系统错误&quot;</span>, e);</span><br><span class="line">            json.set(<span class="string">&quot;message&quot;</span>, <span class="string">&quot;系统内部错误，请联系管理员&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> json.toString();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E9%85%8D%E7%BD%AESpringCache%E5%AE%9E%E7%8E%B0%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-9/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E9%85%8D%E7%BD%AESpringCache%E5%AE%9E%E7%8E%B0%E4%BA%8C%E7%BA%A7%E7%BC%93%E5%AD%98-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-9/" class="post-title-link" itemprop="url">配置SpringCache实现二级缓存-java学习笔记(9)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-29 11:37:02 / 修改时间：11:50:23" itemprop="dateCreated datePublished" datetime="2024-12-29T11:37:02+08:00">2024-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>我们都知道Redis的功能是用来缓存数据的，如果我们把数据库中常用的数据缓存到Redis中，是不是就可以减少数据库调用了呢。</p>
+<h2 id="缓存什么样的数据"><a href="#缓存什么样的数据" class="headerlink" title="缓存什么样的数据?"></a>缓存什么样的数据?</h2><p>比如说大型的电商网站都会把首页的数据缓存到内存当中，当前端项目渲染首页的时候，后端只需要从内存中提取数据即可，不需要走数据库，所以首页加载速度就明显提升了。</p>
+<p>毕竟内存空间有限，我们不能把数据库中所有的记录都缓存到内存当中。如果是电商网站，热门商品应该缓存起来;如果是新闻网站，当天的新闻都应该缓存起来。如果是校园网，本学期考试成绩应该缓存起来。以上只是笼统的思路，具体情况还要具体分析。我们开发的健康体检项目，本质上属于电商范畴的，所以热门的体检套餐必须要缓存起来。</p>
+<h2 id="一级缓存和二级缓存有什么区别"><a href="#一级缓存和二级缓存有什么区别" class="headerlink" title="一级缓存和二级缓存有什么区别?"></a>一级缓存和二级缓存有什么区别?</h2><p>首先一级缓存和二级缓存都是针对持久层框架来讲的，理解起来并不困难。无论一级缓存还是二级缓存，都是用来缓存SELECT语句查询结果的，跟SERT、DELETE、UPDATE操作毫无关系。但是我们建立了缓存之后，如果遇上INSERT、DELETE、UPDATE操作，是会让缓存数据失效的。具体什么情况，你认真往下看。</p>
+<h3 id="一级缓存技术"><a href="#一级缓存技术" class="headerlink" title="一级缓存技术"></a>一级缓存技术</h3><p>MyBatis自带一级缓存功能，也就是SqlSession级别的缓存。MyBatis与Spring框架结合之后，SqlSession会话就全都交给Spring框架管理了，所以很多同学都没有用过MyBatis的SalSession对象。你可以简单的把SqlSession理解成Java程序与MyBatis的通讯通道，通过这个通道，可以让MyBatis执行SQL语句。SqlSession内部包含了一个缓存对象，用于存储SELECT语句的执行结果，这种缓存被称作一级缓存。假设我们用SqlSession对象让MyBatis执行了一条查询语句，这个SQL语句和查询结果被缓存起来。当我们再次用这个SalSession对象执行该查询语句的话，MyBatis不会去执行SQL语句，而是从一级缓存中提取结果直接返回，这就省下了查询数据库的时间。当然了，如果你查询了某张表数据之后，接着执行了修改该表数据的SQL，这会让一级缓存失效，所以你再执行相同的查询语句必须还是要走数据库的。</p>
+<h3 id="二级缓存技术"><a href="#二级缓存技术" class="headerlink" title="二级缓存技术"></a>二级缓存技术</h3><p>刚才讲了一级缓存主要体现在当前SlSession对象多次执行相同查询的情况才会体现出来，但是一个业务流程中，很少会多次执行相同的SELECT语句，所以一级缓存的优势体现的不明显。而且SqlSession生存的时间很短要运行的SQL语句执行完，它就被销毁了。因此一级缓存的数据并不能长期存在，这是一级缓存难以被利用的又个原因。</p>
+<p>如果我们能让缓存的数据不局限于当前的SqlSession对象，而是被所有的SqlSession对象共享使用，那么缓存的利用率就大大提升了，于是二级缓存的技术被抛出来了。二级缓存是独立在SqlSession之外的缓存，可以被所有的SqlSession共享使用。而且二级缓存的数据可以一直缓存下去，没有时间的限制，直到缓存与数据库数据不一致的时候(INSERT、DELETE、UPDATE)，才需要销毁缓存。</p>
+<p>虽然MyBatis支持二级缓存技术，但是需要我们额外挑选缓存平台。既然我们现在用SpringBoot管理MyBatis框架，那么干脆二级缓存也由Spring来管理吧。SpringCache是Spring提供的二级缓存管理技术，我们就用它来管理项目中的二级缓存。</p>
+<h3 id="配置SpringCache"><a href="#配置SpringCache" class="headerlink" title="配置SpringCache"></a>配置SpringCache</h3><p>在 application.yml 文件中，填入SpringCache的配置信息。SpringCache支持多种缓存平台，例如Redis.<br>Ehcache、Couchbase等等。这里我们选择Redis缓存数据，毕竟Redis普及度更高。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line">  <span class="attr">cache:</span></span><br><span class="line">    <span class="attr">type:</span> <span class="string">redis</span></span><br><span class="line">    <span class="attr">redis:</span></span><br><span class="line">      <span class="attr">time-to-live:</span> <span class="number">2592000000</span></span><br></pre></td></tr></table></figure>
+
+<p>将来我们编写Service方法的时候，需要把查询的数据缓存起来，可以使用 @cacheable 注解。SpringCache创建的二级缓存是Key-Value格式的，Key可以我们自己规定，Value就是插叙的结果。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Cacheable(cacheNames = &quot;goods&quot;, key = &quot;#id&quot;)</span></span><br><span class="line"><span class="keyword">public</span> HashMap&lt;String, Object&gt; <span class="title function_">getHealthPackage</span><span class="params">(Integer id)</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>下面的Service方法是用来修改某个商品信息的，@cacheEvict 注解可以删除二级缓存的数据。如果二级缓存中存在该商品，就销毁这条商品的二级缓存，其他商品的二级缓存依旧存在。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@CacheEvict(cacheNames = &quot;goods&quot;, key = &quot;#id&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">updateHealthPackage</span><span class="params">(Integer id)</span> &#123;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%BB%A4%E5%99%A8%E9%98%B2%E5%BE%A1XSS%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%BB%A4%E5%99%A8%E9%98%B2%E5%BE%A1XSS%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-8/" class="post-title-link" itemprop="url">设置过滤器防御XSS脚本攻击-java学习笔记(8)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2024-12-29 10:30:37 / 修改时间：11:36:02" itemprop="dateCreated datePublished" datetime="2024-12-29T10:30:37+08:00">2024-12-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>首先我们要创建一个执行转义的封装类，这个类继承 HttpservletRequestwrapper 父类。在Web项目中，我们无法修改 HttpservletRequest 实现类的内容，因为请求的实现类是由各个Web容器厂商自己扩展的。但是有时候我们还想修改请求类中的内容，这该怎么办呢?Java语言给我们留出了缺口，我们只要继承Java Web内置的HttpservletRequestwrapper 父类，就能修改请求类的内容。如果我们能修改请求类的内容，我要修改获取请求数据的函数，返回的并不是客户端Form表单或者Ajax提交的数据，而是经过转义之后数据。</p>
+<p>在 com.jiang.his.config.xss 包中创建 XssHttpServletRequestwrapper 类。把获取请求头和请求体数据的方法都要重写，返回的是经过XSS转义后的数据。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config.xss;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequestWrapper;</span><br><span class="line"><span class="keyword">import</span> cn.hutool.core.util.StrUtil;</span><br><span class="line"><span class="keyword">import</span> cn.hutool.http.HtmlUtil;</span><br><span class="line"><span class="keyword">import</span> java.util.HashMap;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ServletInputStream;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.ReadListener;</span><br><span class="line"><span class="keyword">import</span> java.io.*;</span><br><span class="line"><span class="keyword">import</span> org.apache.commons.io.IOUtils;</span><br><span class="line"><span class="keyword">import</span> cn.hutool.json.JSONObject;</span><br><span class="line"><span class="keyword">import</span> cn.hutool.json.JSONUtil;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">XssHttpServletRequestWrapper</span> <span class="keyword">extends</span> <span class="title class_">HttpServletRequestWrapper</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">// 保存原始请求体内容</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">final</span> <span class="type">byte</span>[] body;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">public</span> <span class="title function_">XssHttpServletRequestWrapper</span><span class="params">(HttpServletRequest request)</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="built_in">super</span>(request);</span><br><span class="line">        <span class="comment">// 读取并保存请求体</span></span><br><span class="line">        <span class="keyword">try</span> (<span class="type">InputStream</span> <span class="variable">in</span> <span class="operator">=</span> request.getInputStream()) &#123;</span><br><span class="line">            body = IOUtils.toByteArray(in);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getHeader</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> <span class="built_in">super</span>.getHeader(name);</span><br><span class="line">        <span class="keyword">return</span> escapeXss(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">getParameter</span><span class="params">(String name)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">value</span> <span class="operator">=</span> <span class="built_in">super</span>.getParameter(name);</span><br><span class="line">        <span class="keyword">return</span> escapeXss(value);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> String[] getParameterValues(String name) &#123;</span><br><span class="line">        String[] values = <span class="built_in">super</span>.getParameterValues(name);</span><br><span class="line">        <span class="keyword">if</span> (values == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        String[] escapeValues = <span class="keyword">new</span> <span class="title class_">String</span>[values.length];</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; values.length; i++) &#123;</span><br><span class="line">            escapeValues[i] = escapeXss(values[i]);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">return</span> escapeValues;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, String[]&gt; getParameterMap() &#123;</span><br><span class="line">        Map&lt;String, String[]&gt; parameterMap = <span class="built_in">super</span>.getParameterMap();</span><br><span class="line">        Map&lt;String, String[]&gt; escapedParameterMap = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">for</span> (Map.Entry&lt;String, String[]&gt; entry : parameterMap.entrySet()) &#123;</span><br><span class="line">            String[] values = entry.getValue();</span><br><span class="line">            String[] escapedValues = <span class="keyword">new</span> <span class="title class_">String</span>[values.length];</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> <span class="variable">i</span> <span class="operator">=</span> <span class="number">0</span>; i &lt; values.length; i++) &#123;</span><br><span class="line">                escapedValues[i] = escapeXss(values[i]);</span><br><span class="line">            &#125;</span><br><span class="line">            escapedParameterMap.put(entry.getKey(), escapedValues);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> escapedParameterMap;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> ServletInputStream <span class="title function_">getInputStream</span><span class="params">()</span> <span class="keyword">throws</span> IOException &#123;</span><br><span class="line">        <span class="comment">// 如果是空body，直接返回原始流</span></span><br><span class="line">        <span class="keyword">if</span> (body == <span class="literal">null</span> || body.length == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="built_in">super</span>.getInputStream();</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 转换请求体内容为字符串并进行XSS过滤</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">bodyString</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">String</span>(body);</span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            <span class="comment">// 使用hutool解析JSON</span></span><br><span class="line">            <span class="type">JSONObject</span> <span class="variable">jsonObject</span> <span class="operator">=</span> JSONUtil.parseObj(bodyString);</span><br><span class="line">            <span class="comment">// 递归处理JSON中的所有字符串值</span></span><br><span class="line">            cleanXssJson(jsonObject);</span><br><span class="line">            bodyString = jsonObject.toString();</span><br><span class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">            <span class="comment">// 如果不是JSON格式，直接进行XSS过滤</span></span><br><span class="line">            bodyString = escapeXss(bodyString);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 将过滤后的内容转换为InputStream</span></span><br><span class="line">        <span class="keyword">final</span> <span class="type">ByteArrayInputStream</span> <span class="variable">byteArrayInputStream</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ByteArrayInputStream</span>(bodyString.getBytes());</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 返回自定义的ServletInputStream</span></span><br><span class="line">        <span class="keyword">return</span> <span class="keyword">new</span> <span class="title class_">ServletInputStream</span>() &#123;</span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isFinished</span><span class="params">()</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">boolean</span> <span class="title function_">isReady</span><span class="params">()</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">setReadListener</span><span class="params">(ReadListener readListener)</span> &#123;</span><br><span class="line">                <span class="comment">// 不需要实现</span></span><br><span class="line">            &#125;</span><br><span class="line"></span><br><span class="line">            <span class="meta">@Override</span></span><br><span class="line">            <span class="keyword">public</span> <span class="type">int</span> <span class="title function_">read</span><span class="params">()</span> &#123;</span><br><span class="line">                <span class="keyword">return</span> byteArrayInputStream.read();</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// 递归清理JSON对象中的XSS</span></span><br><span class="line">    <span class="keyword">private</span> <span class="keyword">void</span> <span class="title function_">cleanXssJson</span><span class="params">(JSONObject jsonObject)</span> &#123;</span><br><span class="line">        <span class="keyword">for</span> (String key : jsonObject.keySet()) &#123;</span><br><span class="line">            <span class="type">Object</span> <span class="variable">value</span> <span class="operator">=</span> jsonObject.get(key);</span><br><span class="line">            <span class="keyword">if</span> (value <span class="keyword">instanceof</span> String) &#123;</span><br><span class="line">                jsonObject.set(key, escapeXss((String) value));</span><br><span class="line">            &#125; <span class="keyword">else</span> <span class="keyword">if</span> (value <span class="keyword">instanceof</span> JSONObject) &#123;</span><br><span class="line">                cleanXssJson((JSONObject) value);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * XSS转义处理</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">private</span> String <span class="title function_">escapeXss</span><span class="params">(String value)</span> &#123;</span><br><span class="line">        <span class="keyword">if</span> (StrUtil.isBlank(value)) &#123;</span><br><span class="line">            <span class="keyword">return</span> value;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">// 使用hutool的HtmlUtil进行HTML转义</span></span><br><span class="line">        <span class="keyword">return</span> HtmlUtil.cleanHtmlTag(value);</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>在 com.jiang.his.config.xss 包中，创建 XssFilter 类。把 HttpServletRequest 包装成 XssHttpServletRequestWrapper，然后传给Web方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config.xss;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> javax.servlet.*;</span><br><span class="line"><span class="keyword">import</span> javax.servlet.http.HttpServletRequest;</span><br><span class="line"><span class="keyword">import</span> java.io.IOException;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * XSS过滤器</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">XssFilter</span> <span class="keyword">implements</span> <span class="title class_">Filter</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">init</span><span class="params">(FilterConfig filterConfig)</span> <span class="keyword">throws</span> ServletException &#123;</span><br><span class="line">        <span class="comment">// 初始化时不需要特殊处理</span></span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">doFilter</span><span class="params">(ServletRequest request, ServletResponse response, FilterChain chain)</span></span><br><span class="line">            <span class="keyword">throws</span> IOException, ServletException &#123;</span><br><span class="line">        <span class="comment">// 转换成HttpServletRequest</span></span><br><span class="line">        <span class="type">HttpServletRequest</span> <span class="variable">httpRequest</span> <span class="operator">=</span> (HttpServletRequest) request;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 包装请求对象，处理XSS</span></span><br><span class="line">        <span class="type">XssHttpServletRequestWrapper</span> <span class="variable">xssRequest</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">XssHttpServletRequestWrapper</span>(httpRequest);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 继续执行过滤器链</span></span><br><span class="line">        chain.doFilter(xssRequest, response);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">destroy</span><span class="params">()</span> &#123;</span><br><span class="line">        <span class="comment">// 销毁时不需要特殊处理</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<p>在 com.jiang.his.config.xss 包中，创建 XssConfig 类。在类中，创建一个过滤器注册方法，把 XssFilter 注册到过滤器链中。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config.xss;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.boot.web.servlet.FilterRegistrationBean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * XSS过滤器配置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">XssConfig</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> FilterRegistrationBean&lt;XssFilter&gt; <span class="title function_">xssFilterRegistrationBean</span><span class="params">()</span> &#123;</span><br><span class="line">        FilterRegistrationBean&lt;XssFilter&gt; registration = <span class="keyword">new</span> <span class="title class_">FilterRegistrationBean</span>&lt;&gt;();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 注册XSS过滤器</span></span><br><span class="line">        registration.setFilter(<span class="keyword">new</span> <span class="title class_">XssFilter</span>());</span><br><span class="line">        <span class="comment">// 过滤所有URL</span></span><br><span class="line">        registration.addUrlPatterns(<span class="string">&quot;/*&quot;</span>);</span><br><span class="line">        <span class="comment">// 过滤器名称</span></span><br><span class="line">        registration.setName(<span class="string">&quot;XssFilter&quot;</span>);</span><br><span class="line">        <span class="comment">// 优先级，值越小优先级越高</span></span><br><span class="line">        registration.setOrder(<span class="number">1</span>);</span><br><span class="line">        </span><br><span class="line">        <span class="keyword">return</span> registration;</span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+<h2 id="允许跨域访问CORS"><a href="#允许跨域访问CORS" class="headerlink" title="允许跨域访问CORS"></a>允许跨域访问CORS</h2><p>在 com,jiang.his.config包中创建 CorsConfig.java类，扩展 WebMvcConfigurer 接囗。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.config.annotation.CorsRegistry;</span><br><span class="line"><span class="keyword">import</span> org.springframework.web.servlet.config.annotation.WebMvcConfigurer;</span><br><span class="line"></span><br><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 跨域配置</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">CorsConfig</span> <span class="keyword">implements</span> <span class="title class_">WebMvcConfigurer</span> &#123;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">void</span> <span class="title function_">addCorsMappings</span><span class="params">(CorsRegistry registry)</span> &#123;</span><br><span class="line">        registry.addMapping(<span class="string">&quot;/**&quot;</span>)  <span class="comment">// 所有接口</span></span><br><span class="line">                .allowedOriginPatterns(<span class="string">&quot;*&quot;</span>)  <span class="comment">// 允许所有来源</span></span><br><span class="line">                .allowedMethods(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;POST&quot;</span>, <span class="string">&quot;PUT&quot;</span>, <span class="string">&quot;DELETE&quot;</span>, <span class="string">&quot;OPTIONS&quot;</span>)  <span class="comment">// 允许的HTTP方法</span></span><br><span class="line">                .allowedHeaders(<span class="string">&quot;*&quot;</span>)  <span class="comment">// 允许所有请求头</span></span><br><span class="line">                .allowCredentials(<span class="literal">true</span>)  <span class="comment">// 允许发送cookie</span></span><br><span class="line">                .maxAge(<span class="number">3600L</span>);  <span class="comment">// 预检请求的有效期，单位为秒</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125; </span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/28/SaToken%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A1%86%E6%9E%B6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -212,7 +619,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-29 09:47:10" itemprop="dateModified" datetime="2024-12-29T09:47:10+08:00">2024-12-29</time>
+                <time title="修改时间：2024-12-29 10:26:10" itemprop="dateModified" datetime="2024-12-29T10:26:10+08:00">2024-12-29</time>
               </span>
 
           
@@ -227,6 +634,7 @@
 
       
           <p>Sa-Token是一个轻量级Java权限认证框架，主要解决:登录认证、权限认证、单点登录、OAuth2.0、分布式Session会话、微服务网关鉴权 等一系列权限相关问题。SaToken官方文档非常详尽，我们按照手册的指引可以很轻松的把SaToken整合到SpringBoot项目中。</p>
+<p><a target="_blank" rel="noopener" href="https://sa-token.cc/">SaToken官方文档</a></p>
 <h2 id="认证与授权"><a href="#认证与授权" class="headerlink" title="认证与授权"></a>认证与授权</h2><h3 id="颁发令牌-Token"><a href="#颁发令牌-Token" class="headerlink" title="颁发令牌(Token)"></a>颁发令牌(Token)</h3><p>SaToken框架只会在两种业务场景中用到:登陆与访问。我们先来看一下登陆场景是怎么使用SaToken框架的。当用户登陆的时候，经过Java项目对登陆用户名和密码的核对，允许用户登陆系统。这时候需要我们调用SaToken的工具类(StpUtil)创建令牌字符串(Token)。SaToken生成的令牌字符串会被缓存到Redis中，接下来Web方法会把这个令牌字符串写到Http响应返回给客户端。</p>
 <img src="/2024/12/28/SaToken%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A1%86%E6%9E%B6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7/image1.png" class="">
 
@@ -264,6 +672,20 @@
 <h2 id="SaToken多账号体系注解鉴权"><a href="#SaToken多账号体系注解鉴权" class="headerlink" title="SaToken多账号体系注解鉴权"></a>SaToken多账号体系注解鉴权</h2><h3 id="何为同端互斥"><a href="#何为同端互斥" class="headerlink" title="何为同端互斥?"></a>何为同端互斥?</h3><p>如果你经常使用腾讯QQ，就会发现它的登录有如下特点:允许手机端QQ和PC端QQ同时在线，但是不能在两个手机或者两台电脑上面登录一个账号，这就是同端互斥。我们在yml文件中填写SaToken配置信息的时候设置了 isconcurrent 属性值为 false ，就算是开启了同端互斥功能。</p>
 <p>由于开启了同端互斥，也就意味着异端不互斥，所以我们以后向SaToken会话对象传递用户ID的时候，必须要指明用户的设备:Web端、PC端，还是APP端。</p>
 <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">StpUtil.login(userId, <span class="string">&quot;PC&quot;</span>);</span><br><span class="line">StpUtil.login(userId, <span class="string">&quot;APP&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<p>当我们要获取Token令牌的时候，代码变成了下面的样子。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">StpUtil.getTokenValueByLoginId(<span class="number">9521</span>,<span class="string">&quot;Web&quot;</span>);</span><br></pre></td></tr></table></figure>
+
+<h2 id="何为多账户认证"><a href="#何为多账户认证" class="headerlink" title="何为多账户认证"></a>何为多账户认证</h2><p>有的时候我们会在一个项目中使用两套账号体系，如果认证与授权框架不做特殊处理，就会出现严重的逻辑错误。比如说体检人在业务端登陆之后，拿到了Token令牌。如果该体检人如果访问MIS系统，MIS系统会认为该用户已经登陆成功了，所以允许访问MIS系统。你觉得这样合理吗?当然不合理。所以我们要让MIS端和业务端有各自的认证与授权体系，说白了就是MIS端颁发的令牌，拿到业务端是不承认的，反之亦然。</p>
+<p>SaToken框架的多账户认证就是解决上面问题设计的。我们知道所有的认证与授权服务都是通过调用 stputil 中的静态方法实现的。如果我们要搞两套认证与授权体系，那么就不能两套体系共用 stputil 类，我们需要再创建一个类似 stputil 的Java类。</p>
+<p>在 <code>com.jiang.his.config.sa_token</code> 包中，创建 <code>StpCustomerUtil.java</code> 类。这个类的代码，拷贝自SaToken官方文档，我只是换了个类名改了type变量值而已。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@Component</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">StpCustomerUtil</span> &#123;</span><br><span class="line"></span><br><span class="line"> <span class="keyword">private</span> <span class="title function_">StpCustomerUtil</span><span class="params">()</span> &#123;&#125;</span><br><span class="line"></span><br><span class="line"> <span class="comment">/**</span></span><br><span class="line"><span class="comment">  * 多账号体系下的类型标识</span></span><br><span class="line"><span class="comment">  */</span></span><br><span class="line"> <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="type">String</span> <span class="variable">TYPE</span> <span class="operator">=</span> <span class="string">&quot;customer&quot;</span>;</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>当业务端的Web方法需要用 @SaCheckLogin 或者 @SaCheckPermission 注解的时候，需要用 type 属性规定使用 StpCustomerUtil 类做认证与授权服务。反之如果是MIS端的Web方法，就需要用type属性，让它依旧用StpUtil 做认证与授权即可。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SaCheckLogin(type = StpCustomerUtil.TYPE)</span></span><br><span class="line"><span class="meta">@RequestMapping(&quot;/user/info&quot;)</span></span><br><span class="line"><span class="keyword">public</span> String <span class="title function_">userInfo</span><span class="params">()</span> &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&quot;用户信息&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3 id="测试项目运行"><a href="#测试项目运行" class="headerlink" title="测试项目运行"></a>测试项目运行</h3><p>我们现在已经把SaToken框架完全整合到了Java项目中，接下来我们应该启动后端项目试一下。如果没有报错说明咱们的整合工作是成功的。在启动项目之前，我们要给主类添加两个注解。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@SpringBootApplication</span></span><br><span class="line"><span class="meta">@ComponentScan(&quot;com.jiang.*&quot;)</span></span><br><span class="line"><span class="meta">@MapperScan(&quot;com.jiang.his.db.dao&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">HisApplication</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> &#123;</span><br><span class="line">        SpringApplication.run(HisApplication.class, args);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
       
     </div>
@@ -502,455 +924,10 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/08/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-%E6%90%AD%E5%BB%BA%E5%85%B6%E4%BD%99%E5%90%8E%E7%AB%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/12/08/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-%E6%90%AD%E5%BB%BA%E5%85%B6%E4%BD%99%E5%90%8E%E7%AB%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/" class="post-title-link" itemprop="url">java学习笔记(3)-搭建其余后端中间件</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-12-08 22:02:03" itemprop="dateCreated datePublished" datetime="2024-12-08T22:02:03+08:00">2024-12-08</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-21 23:39:36" itemprop="dateModified" datetime="2024-12-21T23:39:36+08:00">2024-12-21</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>攻克了数据库集群这一关，接下来轮到Redis、MongoDB、RabbitMQ这几个中间件了。我们依旧还是用Docker环境来创建这些中间件的容器。不得不说有了Docker环境，我们搭建后端这些中间件真的是非常方便。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/12/08/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-3-%E6%90%AD%E5%BB%BA%E5%85%B6%E4%BD%99%E5%90%8E%E7%AB%AF%E4%B8%AD%E9%97%B4%E4%BB%B6/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/" class="post-title-link" itemprop="url">java学习笔记(2)-Mycat管理Mysql集</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-12-01 22:13:59" itemprop="dateCreated datePublished" datetime="2024-12-01T22:13:59+08:00">2024-12-01</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-08 21:59:45" itemprop="dateModified" datetime="2024-12-08T21:59:45+08:00">2024-12-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>mysql集群5个节点都能同步到数据表。但是毕竟我们写程序总不能跟6个MySQL打交道吧，需要有一个对接人，这个对接人就是MyCat。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/12/01/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-2-Mycat%E7%AE%A1%E7%90%86Mysql%E9%9B%86/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/11/30/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(1)/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2024/11/30/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(1)/" class="post-title-link" itemprop="url">Java学习笔记（1） - MySQL集群</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2024-11-30 20:14:19" itemprop="dateCreated datePublished" datetime="2024-11-30T20:14:19+08:00">2024-11-30</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-12-08 21:19:18" itemprop="dateModified" datetime="2024-12-08T21:19:18+08:00">2024-12-08</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="MySQL集群"><a href="#MySQL集群" class="headerlink" title="MySQL集群"></a>MySQL集群</h1><h2 id="1-数据库的安装"><a href="#1-数据库的安装" class="headerlink" title="1. 数据库的安装"></a>1. 数据库的安装</h2><p>安装MySQL集群，需要先安装MySQL的<code>5.7.41</code>版本，不能使用8.0版本。</p>
-<h3 id="1-1-安装MySQL"><a href="#1-1-安装MySQL" class="headerlink" title="1.1 安装MySQL"></a>1.1 安装MySQL</h3><img src="/2024/11/30/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(1)/java_mysql.png" class="">
-
-<p>由于Docker容器的IP地址是动态分配的，每次启动相同容器，它的IP地址都会有变化。这就非常影响数据库集群的搭建，比如说MySQL 2要同步MySQL 1的数据，MySQL1容器的IP地址经常变来变去肯定是不行的，所以我们要给每个Docker容器都分配固定的IP地址。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2024/11/30/java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0(1)/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2019/10/23/webpack/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2019/10/23/webpack/" class="post-title-link" itemprop="url">webpack</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2019-10-23 14:54:32" itemprop="dateCreated datePublished" datetime="2019-10-23T14:54:32+08:00">2019-10-23</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="概念"><a href="#概念" class="headerlink" title="概念"></a>概念</h2><blockquote>
-<p>本质上，webpack 是一个现代 JavaScript 应用程序的静态模块打包工具。当 webpack 处理应用程序时，它会在内部构建一个**依赖图(dependency graph)**，此依赖图会映射项目所需的每个模块，并生成一个或多个 bundle。</p>
-</blockquote>
-<p>上面一段话摘自官方文档，由此引申出下面几个问题</p>
-<ol>
-<li>什么是依赖图？依赖图是怎么映射项目所需的模块？</li>
-<li>bundle 是什么？</li>
-</ol>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2019/10/23/webpack/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2018/02/09/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0%E6%8E%A5%E5%8F%A3/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/02/09/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0%E6%8E%A5%E5%8F%A3/" class="post-title-link" itemprop="url">小程序配置本地接口</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-02-09 10:31:09" itemprop="dateCreated datePublished" datetime="2018-02-09T10:31:09+08:00">2018-02-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>之前在做公司小程序开发的时候，没有发现本地调试的方法，所以每次写完接口必须要把代码上传远程服务器进行测试，这种处理不仅不优雅，更要命的是极度拖延了开发进度，不过因为第一次接触小程序，完全不熟悉其开发原理，所以一直没有机会去改善开发逻辑。直至公司小程序开发完成后，才在网上去搜寻解决文案，终于找到本地开发调试的方法，并记录下来。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/02/09/%E5%B0%8F%E7%A8%8B%E5%BA%8F%E9%85%8D%E7%BD%AE%E6%9C%AC%E5%9C%B0%E6%8E%A5%E5%8F%A3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2018/01/26/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/01/26/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E5%BA%93/" class="post-title-link" itemprop="url">常用的工具库</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-26 14:58:08" itemprop="dateCreated datePublished" datetime="2018-01-26T14:58:08+08:00">2018-01-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h1><h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://greensock.com/gsap">GreenSock | GSAP</a>: CSS动画类库</li>
-<li><a target="_blank" rel="noopener" href="http://robertpenner.com/easing/">easing</a>: 函数式动画库</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/01/26/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E5%BA%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
   </nav>
 
 
@@ -1016,7 +993,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-count">23</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
