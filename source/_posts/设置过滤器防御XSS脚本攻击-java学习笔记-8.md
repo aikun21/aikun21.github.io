@@ -159,35 +159,78 @@ package com.jiang.his.config.xss;
 import javax.servlet.*;
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 /**
  * XSS过滤器
  */
 public class XssFilter implements Filter {
-
+    
+    // 排除链接
+    private List<String> excludes = new ArrayList<>();
+    
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        // 初始化时不需要特殊处理
+        // 获取排除的URL
+        String temp = filterConfig.getInitParameter("excludes");
+        if (temp != null) {
+            String[] url = temp.split(",");
+            for (int i = 0; i < url.length; i++) {
+                excludes.add(url[i]);
+            }
+        }
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
-        // 转换成HttpServletRequest
         HttpServletRequest httpRequest = (HttpServletRequest) request;
+        
+        // 判断是否需要过滤
+        if (handleExcludeURL(httpRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
+        
+        // 判断是否是文件上传请求
+        if (isMultipartContent(httpRequest)) {
+            chain.doFilter(request, response);
+            return;
+        }
         
         // 包装请求对象，处理XSS
         XssHttpServletRequestWrapper xssRequest = new XssHttpServletRequestWrapper(httpRequest);
-        
-        // 继续执行过滤器链
         chain.doFilter(xssRequest, response);
+    }
+    
+    private boolean handleExcludeURL(HttpServletRequest request) {
+        if (excludes == null || excludes.isEmpty()) {
+            return false;
+        }
+        String url = request.getServletPath();
+        for (String pattern : excludes) {
+            Pattern p = Pattern.compile("^" + pattern);
+            Matcher m = p.matcher(url);
+            if (m.find()) {
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    private boolean isMultipartContent(HttpServletRequest request) {
+        String contentType = request.getContentType();
+        return contentType != null && contentType.toLowerCase().startsWith("multipart/");
     }
 
     @Override
     public void destroy() {
         // 销毁时不需要特殊处理
     }
-} 
+}
 ```
 
 在 com.jiang.his.config.xss 包中，创建 XssConfig 类。在类中，创建一个过滤器注册方法，把 XssFilter 注册到过滤器链中。

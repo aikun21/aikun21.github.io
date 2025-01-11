@@ -87,18 +87,20 @@ public class StpInterfaceImpl implements StpInterface {
     // 返回一个用户所拥有的权限码集合
     @Override
     public List<String> getPermissionList(Object loginId, String loginType) {
-        List<String> list = new ArrayList<>();
-        int userId = (Integer) loginId;
-        Set<String> permissions = userMapper.searchUserPermissions(userId);
-        list.addAll(permissions);
-        return list;
+        try {
+            int userId = Integer.parseInt(loginId.toString());
+            Set<String> permissions = userMapper.searchUserPermissions(userId);
+            return new ArrayList<>(permissions);
+        } catch (NumberFormatException e) {
+            // 可以选择记录日志或返回空列表
+            return new ArrayList<>();
+        }
     }
 
     // 返回一个用户所拥有的角色集合
     @Override
     public List<String> getRoleList(Object loginId, String loginType) {
-        List<String> list = new ArrayList<>();
-        return list;
+        return new ArrayList<>();
     }
 }
 ```
