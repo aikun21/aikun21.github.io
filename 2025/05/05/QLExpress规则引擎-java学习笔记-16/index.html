@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aikun21.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"FZEIYJ3Q3S","apiKey":"8abf45f1b4a3ca657d8ec5763e82b1cd","indexName":"dev_rywenblog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="为什么要使用规则引擎?往简单了说，规则引擎是用来执行条件判断的，符合什么规则就执行什么代码。既然是这样，为什么我们不直接写if-else语句，而要用规则引擎呢?答案很简单:可维护性。如果你在Java代码中写了一堆条件判断，将来判断依据变了，你要重新修改代码编译项目，还要重新发布项目，整个流程太繁琐了。如果采用规则引擎，我们可以把条件判断写成文本保存到配置文件或者数据库，日后维护也更加方便，修改配置">
+<meta property="og:type" content="article">
+<meta property="og:title" content="QLExpress规则引擎-java学习笔记(16)">
+<meta property="og:url" content="https://aikun21.github.io/2025/05/05/QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-16/index.html">
+<meta property="og:site_name" content="Rywen&#39;s Blog">
+<meta property="og:description" content="为什么要使用规则引擎?往简单了说，规则引擎是用来执行条件判断的，符合什么规则就执行什么代码。既然是这样，为什么我们不直接写if-else语句，而要用规则引擎呢?答案很简单:可维护性。如果你在Java代码中写了一堆条件判断，将来判断依据变了，你要重新修改代码编译项目，还要重新发布项目，整个流程太繁琐了。如果采用规则引擎，我们可以把条件判断写成文本保存到配置文件或者数据库，日后维护也更加方便，修改配置">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-05T14:23:29.000Z">
+<meta property="article:modified_time" content="2025-05-06T12:45:55.473Z">
+<meta property="article:author" content="Rywen">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://aikun21.github.io/2025/05/05/QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-16/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>QLExpress规则引擎-java学习笔记(16) | Rywen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Rywen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">生活不止眼前的苟且，还有诗和远方.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2025/05/05/QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-16/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          QLExpress规则引擎-java学习笔记(16)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-05-05 22:23:29" itemprop="dateCreated datePublished" datetime="2025-05-05T22:23:29+08:00">2025-05-05</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-06 20:45:55" itemprop="dateModified" datetime="2025-05-06T20:45:55+08:00">2025-05-06</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="为什么要使用规则引擎"><a href="#为什么要使用规则引擎" class="headerlink" title="为什么要使用规则引擎?"></a>为什么要使用规则引擎?</h2><p>往简单了说，规则引擎是用来执行条件判断的，符合什么规则就执行什么代码。既然是这样，为什么我们不直接写if-else语句，而要用规则引擎呢?答案很简单:可维护性。如果你在Java代码中写了一堆条件判断，将来判断依据变了，你要重新修改代码编译项目，还要重新发布项目，整个流程太繁琐了。如果采用规则引擎，我们可以把条件判断写成文本保存到配置文件或者数据库，日后维护也更加方便，修改配置文件或者数据记录就可以了，不需要修改程序代码。</p>
+<span id="more"></span>
+<h2 id="QLExpress规则引擎"><a href="#QLExpress规则引擎" class="headerlink" title="QLExpress规则引擎"></a>QLExpress规则引擎</h2><p>现在业界有很多规则引擎产品，比如说老牌的Drools、Easy-Rules、RuleBook等等，这里我选择是<a target="_blank" rel="noopener" href="https://gitee.com/cuibo119/QLExpress">阿里开源的QLExpress规则引擎</a>。它轻量级，启动速度快，占用内存小，可以很容易与SpringBoot项目融合。更重要的一点，它的语法与Java非常贴近，可以实现复杂的条件判断和代码语句。像是Drools这种规则引擎，只能做简单的条件判断，不支持复杂的表达式和语法，所以从功能上来说还是QLExpress最佳。</p>
+<h2 id="整合QLExpress规则引擎"><a href="#整合QLExpress规则引擎" class="headerlink" title="整合QLExpress规则引擎"></a>整合QLExpress规则引擎</h2><p>在Java项目中的 <code>pom.xml</code> 文件中，添加下面的标签，把规则引擎整合到Java项目</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 规则引擎 --&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">dependency</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>com.alibaba<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>QLExpress<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">version</span>&gt;</span>3.2.0<span class="tag">&lt;/<span class="name">version</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;<span class="name">exclusions</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-core<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-api<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>org.apache.logging.log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j-to-slf4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;<span class="name">exclusion</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">groupId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">groupId</span>&gt;</span></span><br><span class="line">                    <span class="tag">&lt;<span class="name">artifactId</span>&gt;</span>log4j<span class="tag">&lt;/<span class="name">artifactId</span>&gt;</span></span><br><span class="line">                <span class="tag">&lt;/<span class="name">exclusion</span>&gt;</span></span><br><span class="line">            <span class="tag">&lt;/<span class="name">exclusions</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;/<span class="name">dependency</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="QLExpress规则引擎使用"><a href="#QLExpress规则引擎使用" class="headerlink" title="QLExpress规则引擎使用"></a>QLExpress规则引擎使用</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.ql.util.express.DefaultContext;</span><br><span class="line"><span class="keyword">import</span> com.ql.util.express.ExpressRunner;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">TestRule</span> &#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title function_">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception &#123;</span><br><span class="line">        <span class="type">ExpressRunner</span> <span class="variable">runner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExpressRunner</span>();</span><br><span class="line">        <span class="type">String</span> <span class="variable">rule</span> <span class="operator">=</span> <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">                temp=salary-3500;</span></span><br><span class="line"><span class="string">                tax=0;</span></span><br><span class="line"><span class="string">                if(temp&lt;=0)&#123;</span></span><br><span class="line"><span class="string">                    tax=0;</span></span><br><span class="line"><span class="string">                &#125; else if(temp&lt;=1500)&#123;</span></span><br><span class="line"><span class="string">                    tax=temp*0.03-0;</span></span><br><span class="line"><span class="string">                &#125; else if(temp&lt;=4500)&#123;</span></span><br><span class="line"><span class="string">                tax=temp*0.10-105;</span></span><br><span class="line"><span class="string">                &#125; else if(temp&lt;=9000)&#123;</span></span><br><span class="line"><span class="string">                    tax=temp*0.20-555;</span></span><br><span class="line"><span class="string">                &#125; else if(temp&lt;=35000)&#123;</span></span><br><span class="line"><span class="string">                 tax=temp*0.25-1005;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">                else if(temp&lt;=55000)&#123;</span></span><br><span class="line"><span class="string">                    tax=temp*0.30-2755;</span></span><br><span class="line"><span class="string">                &#125;else if(temp&lt;=80000)&#123;</span></span><br><span class="line"><span class="string">                tax=temp*0.35-5505;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">                else&#123;</span></span><br><span class="line"><span class="string">                tax=temp*0.45-13505;</span></span><br><span class="line"><span class="string">                &#125;</span></span><br><span class="line"><span class="string">                return tax;</span></span><br><span class="line"><span class="string">                &quot;&quot;&quot;</span>;</span><br><span class="line">        DefaultContext&lt;String, Object&gt; context = <span class="keyword">new</span> <span class="title class_">DefaultContext</span>&lt;String, Object&gt;();</span><br><span class="line">        context.put(<span class="string">&quot;salary&quot;</span>, <span class="number">50500</span>);</span><br><span class="line">        <span class="type">Object</span> <span class="variable">r</span> <span class="operator">=</span> runner.execute(rule, context, <span class="literal">null</span>, <span class="literal">true</span>, <span class="literal">false</span>);</span><br><span class="line">        System.out.println(r.toString());</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="第二件半价怎么计算"><a href="#第二件半价怎么计算" class="headerlink" title="第二件半价怎么计算?"></a>第二件半价怎么计算?</h2><p>假设某个体检套餐价格是1000元，它促销规则是第二件半价。客户一笔订单中，购买了几件该体检套餐决定了不同的折扣金额。<br>1.如果只购买一件该体检套餐，则不享受促销优惠，订单金额是1000元。<br>2.如果购买两件该体检套餐，则第二件享受半价，订单金额是1500元<br>3.如果购买三件该体检套餐，则最后一件享受半价，订单金额是2500元<br>4.如果购买四件该体检套餐，则前两件原价，后两件享受半价，订单金额是3000元</p>
+<h2 id="数据表中的计算规则"><a href="#数据表中的计算规则" class="headerlink" title="数据表中的计算规则"></a>数据表中的计算规则</h2><p>我们打开 tb_rule 数据表，里面保存了第二件半价的计算规则。将来我们做到促销规则模块的时候，可以在MIS系统中，添加新的促销规则。现在我们就暂时看一下已有的促销规则。</p>
+<p>数据表 rule 字段中的完整内容如下。计算的公式为: 总金额 - 折扣金额 。很多同学看不懂下面表达式中的number&#x2F;2 代表什么意思。其实很简单，就是计算有几个商品享受折扣。如果是3&#x2F;2，结果是1;如果是4&#x2F;2，结果是2;整数相除，结果还是整数，现在能看明白是什么意思了吧。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.math.BigDecimal;   </span><br><span class="line"></span><br><span class="line">p = <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(price);</span><br><span class="line">n = <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(number);</span><br><span class="line"></span><br><span class="line">result = n.multiply(p).subtract(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(number / <span class="number">2</span>).multiply(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(<span class="string">&quot;0.5&quot;</span>)).multiply(p)).toString();</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/03/24/%E8%B0%83%E7%94%A8%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%983-0%E6%8E%A5%E5%8F%A3%E5%88%9B%E5%BB%BA%E4%BB%98%E6%AC%BE%E5%8D%95-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-15/" rel="prev" title="调用微信支付3.0接口创建付款单-java学习笔记(15)">
+      <i class="fa fa-chevron-left"></i> 调用微信支付3.0接口创建付款单-java学习笔记(15)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/05/06/%E5%88%A9%E7%94%A8MongoDB%E5%AD%98%E5%82%A8%E5%95%86%E5%93%81%E5%BF%AB%E7%85%A7-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-17/" rel="next" title="利用MongoDB存储商品快照-java学习笔记(17)">
+      利用MongoDB存储商品快照-java学习笔记(17) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E8%A6%81%E4%BD%BF%E7%94%A8%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E"><span class="nav-number">1.</span> <span class="nav-text">为什么要使用规则引擎?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E"><span class="nav-number">2.</span> <span class="nav-text">QLExpress规则引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B4%E5%90%88QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E"><span class="nav-number">3.</span> <span class="nav-text">整合QLExpress规则引擎</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E%E4%BD%BF%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">QLExpress规则引擎使用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E4%BB%B6%E5%8D%8A%E4%BB%B7%E6%80%8E%E4%B9%88%E8%AE%A1%E7%AE%97"><span class="nav-number">5.</span> <span class="nav-text">第二件半价怎么计算?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E8%A1%A8%E4%B8%AD%E7%9A%84%E8%AE%A1%E7%AE%97%E8%A7%84%E5%88%99"><span class="nav-number">6.</span> <span class="nav-text">数据表中的计算规则</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rywen</p>
+  <div class="site-description" itemprop="description">生活不止眼前的苟且，还有诗和远方.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rywen</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

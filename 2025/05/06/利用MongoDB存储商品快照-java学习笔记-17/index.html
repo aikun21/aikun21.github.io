@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 7.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"aikun21.github.io","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"appID":"FZEIYJ3Q3S","apiKey":"8abf45f1b4a3ca657d8ec5763e82b1cd","indexName":"dev_rywenblog","hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="为什么用MongoDB存储快照?其实商品快照就是订单商品的当前信息，我们把该商品信息从 tb_goods 表中读取出来，然后存储到快照表中。你用MSQL中的数据表存储快照也是可以的，但是日积月累快照记录越来越多(2000万以上)，MySQL数据表就显得很吃力了。因此我们可以选择适合存储海量数据(TB级别)的MongoDB数据库，而且它的读写速度比MySQL快多了。当然了，还有比MongoDB存储更">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用MongoDB存储商品快照-java学习笔记(17)">
+<meta property="og:url" content="https://aikun21.github.io/2025/05/06/%E5%88%A9%E7%94%A8MongoDB%E5%AD%98%E5%82%A8%E5%95%86%E5%93%81%E5%BF%AB%E7%85%A7-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-17/index.html">
+<meta property="og:site_name" content="Rywen&#39;s Blog">
+<meta property="og:description" content="为什么用MongoDB存储快照?其实商品快照就是订单商品的当前信息，我们把该商品信息从 tb_goods 表中读取出来，然后存储到快照表中。你用MSQL中的数据表存储快照也是可以的，但是日积月累快照记录越来越多(2000万以上)，MySQL数据表就显得很吃力了。因此我们可以选择适合存储海量数据(TB级别)的MongoDB数据库，而且它的读写速度比MySQL快多了。当然了，还有比MongoDB存储更">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2025-05-06T12:45:40.000Z">
+<meta property="article:modified_time" content="2025-05-17T01:37:59.728Z">
+<meta property="article:author" content="Rywen">
+<meta property="article:tag" content="java">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://aikun21.github.io/2025/05/06/%E5%88%A9%E7%94%A8MongoDB%E5%AD%98%E5%82%A8%E5%95%86%E5%93%81%E5%BF%AB%E7%85%A7-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-17/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>利用MongoDB存储商品快照-java学习笔记(17) | Rywen's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Rywen's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">生活不止眼前的苟且，还有诗和远方.</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2025/05/06/%E5%88%A9%E7%94%A8MongoDB%E5%AD%98%E5%82%A8%E5%95%86%E5%93%81%E5%BF%AB%E7%85%A7-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-17/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          利用MongoDB存储商品快照-java学习笔记(17)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2025-05-06 20:45:40" itemprop="dateCreated datePublished" datetime="2025-05-06T20:45:40+08:00">2025-05-06</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-05-17 09:37:59" itemprop="dateModified" datetime="2025-05-17T09:37:59+08:00">2025-05-17</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h2 id="为什么用MongoDB存储快照"><a href="#为什么用MongoDB存储快照" class="headerlink" title="为什么用MongoDB存储快照?"></a>为什么用MongoDB存储快照?</h2><p>其实商品快照就是订单商品的当前信息，我们把该商品信息从 tb_goods 表中读取出来，然后存储到快照表中。你用MSQL中的数据表存储快照也是可以的，但是日积月累快照记录越来越多(2000万以上)，MySQL数据表就显得很吃力了。因此我们可以选择适合存储海量数据(TB级别)的MongoDB数据库，而且它的读写速度比MySQL快多了。当然了，还有比MongoDB存储更多数据(PB级别)的HBase数据库，但是用在我们的项目上就显得大材小用了。</p>
+<h2 id="MongoDB的集合与文档"><a href="#MongoDB的集合与文档" class="headerlink" title="MongoDB的集合与文档"></a>MongoDB的集合与文档</h2><p>由于MongoDB没有数据表结构，也不支持SQL语句。它里面的数据是JSON格式的，被称作文档，然后保存在集合中。也就是说，集合相当于MySQL的数据表，文档相当于数据记录。</p>
+<span id="more"></span>
+
+<h3 id="创建逻辑库"><a href="#创建逻辑库" class="headerlink" title="创建逻辑库"></a>创建逻辑库</h3><p>用Navicat打开MongoDB连接，然后点击鼠标右键，选择新建数据库。创建的罗辑库名称为his，这个逻辑库是给我们项目使用的。</p>
+<h2 id="编写持久层代码"><a href="#编写持久层代码" class="headerlink" title="编写持久层代码"></a>编写持久层代码</h2><p>我们先创建一个商品快照的实体类，用来封装商品快照的数据。</p>
+<h3 id="创建Pojo映射类"><a href="#创建Pojo映射类" class="headerlink" title="创建Pojo映射类"></a>创建Pojo映射类</h3><p>既然我们要向MongoDB中保存商品快照信息，肯定需要用到Pojo类。在<code>com.example.his.api.db.pojo</code> 包中，创建 <code>GoodsSnapshotEntity.java</code> 类。这个映射类的结构就是 <code>goods_snapshot</code> 集合的结构。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.api.db.pojo;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> java.io.Serializable;</span><br><span class="line"><span class="keyword">import</span> java.math.BigDecimal;</span><br><span class="line"><span class="keyword">import</span> java.util.List;</span><br><span class="line"><span class="keyword">import</span> java.util.Map;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.data.annotation.Id;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.mongodb.core.index.Indexed;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.mongodb.core.mapping.Document;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> lombok.Data;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Data</span></span><br><span class="line"><span class="meta">@Document(collection = &quot;goods_snapshot&quot;)</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GoodsSnapshotEntity</span> <span class="keyword">implements</span> <span class="title class_">Serializable</span> &#123;</span><br><span class="line">    <span class="meta">@Id</span></span><br><span class="line">    <span class="keyword">private</span> String _id;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Indexed</span></span><br><span class="line">    <span class="keyword">private</span> Integer id;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String code;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String title;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String description;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Map&lt;String, Object&gt;&gt; checkup_1;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Map&lt;String, Object&gt;&gt; checkup_2;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Map&lt;String, Object&gt;&gt; checkup_3;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Map&lt;String, Object&gt;&gt; checkup_4;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String image;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> BigDecimal initialPrice;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> BigDecimal currentPrice;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String type;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;String&gt; tag;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String ruleName;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> String rule;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">private</span> List&lt;Map&lt;String, Object&gt;&gt; checkup;</span><br><span class="line"></span><br><span class="line">    <span class="meta">@Indexed</span></span><br><span class="line">    <span class="keyword">private</span> String md5;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h3 id="编写Dao方法"><a href="#编写Dao方法" class="headerlink" title="编写Dao方法"></a>编写Dao方法</h3><p>因为MongoDB不支持SQL语句，所以MyBatis也没办法用。我们就直接编写DAO方法，通过Java代码来管理MongoDB中的数据。在<code>com.example.his.api.db.dao</code> 包中，创建 <code>GoodSsnapshotDao.java</code> 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.api.db.dao;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.beans.factory.annotation.Autowired;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.mongodb.core.MongoTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.mongodb.core.query.Criteria;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.mongodb.core.query.Query;</span><br><span class="line"><span class="keyword">import</span> org.springframework.stereotype.Repository;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> com.jiang.his.api.db.pojo.GoodsSnapshotEntity;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Repository</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">GoodsSnapshotDao</span> &#123;</span><br><span class="line">    </span><br><span class="line">    <span class="meta">@Autowired</span></span><br><span class="line">    <span class="keyword">private</span> MongoTemplate mongoTemplate;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 判断MongoDB中是否存在指定md5的商品快照数据</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> md5 商品快照的md5值</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 存在返回true，不存在返回false</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">existsByMd5</span><span class="params">(String md5)</span> &#123;</span><br><span class="line">        <span class="type">Query</span> <span class="variable">query</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Query</span>(Criteria.where(<span class="string">&quot;md5&quot;</span>).is(md5));</span><br><span class="line">        query.skip(<span class="number">0</span>);</span><br><span class="line">        query.limit(<span class="number">1</span>);</span><br><span class="line">        <span class="type">GoodsSnapshotEntity</span> <span class="variable">entity</span> <span class="operator">=</span> mongoTemplate.findOne(query, GoodsSnapshotEntity.class);</span><br><span class="line">        <span class="keyword">return</span> entity != <span class="literal">null</span> ? entity.get_id() : <span class="literal">null</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 插入一条商品快照数据（如果已存在则更新）</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@param</span> entity 商品快照实体</span></span><br><span class="line"><span class="comment">     * <span class="doctag">@return</span> 插入或更新后的商品快照实体</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="keyword">public</span> String <span class="title function_">insert</span><span class="params">(GoodsSnapshotEntity entity)</span> &#123;</span><br><span class="line">        <span class="type">String</span> <span class="variable">_id</span> <span class="operator">=</span> mongoTemplate.save(entity).get_id();</span><br><span class="line">        <span class="keyword">return</span> _id;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="限定特殊客户下单购买体检套餐"><a href="#限定特殊客户下单购买体检套餐" class="headerlink" title="限定特殊客户下单购买体检套餐"></a>限定特殊客户下单购买体检套餐</h2><p>某个客户当天有10笔未付款的订单，或者有5笔以上的退款订单，该用户当天就无法下单购买任何体检套餐。</p>
+<h3 id="编写持久层代码-1"><a href="#编写持久层代码-1" class="headerlink" title="编写持久层代码"></a>编写持久层代码</h3><p>在 <code>OrderDao.xml</code> 文件中，声明SQL语句，查询该用户当天未付款订单数量和退款订单数量。</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="comment">&lt;!-- 判断用户当天是否合法 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">select</span> <span class="attr">id</span>=<span class="string">&quot;checkCustomerLegality&quot;</span> <span class="attr">resultType</span>=<span class="string">&quot;Boolean&quot;</span>&gt;</span></span><br><span class="line">        SELECT </span><br><span class="line">            CASE</span><br><span class="line">                WHEN (</span><br><span class="line">                    (SELECT COUNT(*) FROM tb_order WHERE customer_id = #&#123;customerId&#125; AND status <span class="symbol">&amp;lt;</span> 3 AND create_date = CURDATE()) &gt;= 10</span><br><span class="line">                    OR</span><br><span class="line">                    (SELECT COUNT(*) FROM tb_order WHERE customer_id = #&#123;customerId&#125; AND status = 4 AND refund_date = CURDATE()) &gt;= 5</span><br><span class="line">                ) THEN FALSE</span><br><span class="line">                ELSE TRUE</span><br><span class="line">            END as isLegal</span><br><span class="line">    <span class="tag">&lt;/<span class="name">select</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<p>在 <code>com.example.his.api.db.dao</code> 包 <code>orderDao.java</code> 接囗中，声明DAO方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment"> * 判断用户当天是否合法</span></span><br><span class="line"><span class="comment"> * 规则：某个客户当天有10笔未付款的订单，或者有5笔以上的退款订单，该用户当天就不合法</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@param</span> customerId 客户ID</span></span><br><span class="line"><span class="comment"> * <span class="doctag">@return</span> true 表示合法，false 表示不合法</span></span><br><span class="line"><span class="comment"> */</span></span><br><span class="line">Boolean <span class="title function_">checkCustomerLegality</span><span class="params">(Integer customerId)</span>;</span><br></pre></td></tr></table></figure>
+
+<h3 id="关闭超时未支付的订单"><a href="#关闭超时未支付的订单" class="headerlink" title="关闭超时未支付的订单"></a>关闭超时未支付的订单</h3><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!-- 关闭超时未支付的订单 --&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">update</span> <span class="attr">id</span>=<span class="string">&quot;closeTimeoutOrders&quot;</span>&gt;</span></span><br><span class="line">        UPDATE tb_order</span><br><span class="line">        SET status = 2</span><br><span class="line">        WHERE status = 1</span><br><span class="line">          AND create_date <span class="symbol">&amp;gt;</span>= DATE_SUB(CURDATE(), INTERVAL 7 DAY)</span><br><span class="line">          <span class="comment">&lt;!-- 订单创建时间超过7天，并且创建时间小于当前时间减去30分钟的订单，则关闭，注意时区 --&gt;</span></span><br><span class="line">          AND create_time <span class="symbol">&amp;lt;</span> CONVERT_TZ(NOW(), &#x27;+00:00&#x27;, &#x27;+08:00&#x27;) - INTERVAL 30 MINUTE</span><br><span class="line">        ORDER BY create_time</span><br><span class="line">        LIMIT 100</span><br><span class="line">    <span class="tag">&lt;/<span class="name">update</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="创建微信支付订单"><a href="#创建微信支付订单" class="headerlink" title="创建微信支付订单"></a>创建微信支付订单</h3><figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">     * 创建微信支付订单</span></span><br><span class="line"><span class="comment">     */</span></span><br><span class="line">    <span class="meta">@Override</span></span><br><span class="line">    <span class="meta">@Transactional</span></span><br><span class="line">    <span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title function_">createWxPayOrder</span><span class="params">(Integer customerId, Integer goodsId, Integer number)</span> &#123;</span><br><span class="line">        <span class="comment">// 检查用户是否合法</span></span><br><span class="line">        <span class="type">Boolean</span> <span class="variable">isLegal</span> <span class="operator">=</span> orderDao.checkCustomerLegality(customerId);</span><br><span class="line">        <span class="keyword">if</span> (isLegal == <span class="literal">null</span> || !isLegal) &#123;</span><br><span class="line">            log.warn(<span class="string">&quot;用户[&#123;&#125;]创建订单受限：当天未付款订单过多或退款订单过多&quot;</span>, customerId);</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">null</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 1. 查询商品信息</span></span><br><span class="line">        HashMap&lt;String, Object&gt; goods = goodsDao.selectGoodsWithRule(goodsId);</span><br><span class="line">        <span class="keyword">if</span> (goods == <span class="literal">null</span>) &#123;</span><br><span class="line">            <span class="keyword">throw</span> <span class="keyword">new</span> <span class="title class_">HisException</span>(<span class="string">&quot;商品不存在&quot;</span>);</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// 2. 计算订单金额</span></span><br><span class="line">        <span class="type">BigDecimal</span> <span class="variable">currentPrice</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">BigDecimal</span>(goods.get(<span class="string">&quot;currentPrice&quot;</span>).toString());</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 应用折扣规则</span></span><br><span class="line">        <span class="type">BigDecimal</span> <span class="variable">finalPrice</span> <span class="operator">=</span> currentPrice;</span><br><span class="line">        <span class="type">BigDecimal</span> <span class="variable">totalAmount</span> <span class="operator">=</span> currentPrice.multiply(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(number));</span><br><span class="line">        </span><br><span class="line">        <span class="type">Object</span> <span class="variable">ruleContent</span> <span class="operator">=</span> goods.get(<span class="string">&quot;rule&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (ruleContent != <span class="literal">null</span> &amp;&amp; StringUtils.hasText(ruleContent.toString())) &#123;</span><br><span class="line">            <span class="keyword">try</span> &#123;</span><br><span class="line">                <span class="comment">// 初始化ExpressRunner</span></span><br><span class="line">                <span class="type">ExpressRunner</span> <span class="variable">runner</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">ExpressRunner</span>();</span><br><span class="line">                DefaultContext&lt;String, Object&gt; context = <span class="keyword">new</span> <span class="title class_">DefaultContext</span>&lt;&gt;();</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 设置上下文变量</span></span><br><span class="line">                context.put(<span class="string">&quot;number&quot;</span>, number);                                <span class="comment">// 购买数量</span></span><br><span class="line">                context.put(<span class="string">&quot;price&quot;</span>, currentPrice.doubleValue());             <span class="comment">// 商品原价</span></span><br><span class="line">                context.put(<span class="string">&quot;totalPrice&quot;</span>, totalAmount.doubleValue());         <span class="comment">// 总价</span></span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 执行规则表达式计算折扣</span></span><br><span class="line">                <span class="type">Object</span> <span class="variable">result</span> <span class="operator">=</span> runner.execute(ruleContent.toString(), context, <span class="literal">null</span>, <span class="literal">true</span>, <span class="literal">false</span>);</span><br><span class="line">                </span><br><span class="line">                <span class="keyword">if</span> (result != <span class="literal">null</span>) &#123;</span><br><span class="line">                    <span class="comment">// 转换为BigDecimal，保留2位小数（这是折扣后的总价）</span></span><br><span class="line">                    <span class="type">double</span> <span class="variable">discountedTotalPrice</span> <span class="operator">=</span> Double.parseDouble(result.toString());</span><br><span class="line">                    totalAmount = BigDecimal.valueOf(discountedTotalPrice).setScale(<span class="number">2</span>, RoundingMode.HALF_UP);</span><br><span class="line">                    </span><br><span class="line">                    <span class="comment">// 计算折扣后的单价</span></span><br><span class="line">                    finalPrice = totalAmount.divide(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(number), <span class="number">2</span>, RoundingMode.HALF_UP);</span><br><span class="line">                    </span><br><span class="line">                    log.info(<span class="string">&quot;商品[&#123;&#125;]应用折扣规则，原单价&#123;&#125;，折后单价&#123;&#125;，原总价&#123;&#125;，折后总价&#123;&#125;&quot;</span>, </span><br><span class="line">                            goodsId, currentPrice, finalPrice, </span><br><span class="line">                            currentPrice.multiply(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(number)), totalAmount);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">                log.error(<span class="string">&quot;计算折扣规则失败：&#123;&#125;，将使用原价&quot;</span>, e.getMessage(), e);</span><br><span class="line">                <span class="comment">// 规则执行失败，使用原价</span></span><br><span class="line">                totalAmount = currentPrice.multiply(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(number));</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 3. 生成订单号</span></span><br><span class="line">        <span class="type">String</span> <span class="variable">outTradeNo</span> <span class="operator">=</span> generateOrderNo();</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 检查商品快照是否存在，如果不存在则创建</span></span><br><span class="line">        String snapshotId;</span><br><span class="line">        <span class="type">String</span> <span class="variable">md5</span> <span class="operator">=</span> (String) goods.get(<span class="string">&quot;md5&quot;</span>);</span><br><span class="line">        <span class="keyword">if</span> (md5 != <span class="literal">null</span> &amp;&amp; !md5.isEmpty()) &#123;</span><br><span class="line">            <span class="comment">// 查询MongoDB中是否已存在此商品快照</span></span><br><span class="line">            <span class="type">String</span> <span class="variable">existingSnapshotId</span> <span class="operator">=</span> goodsSnapshotDao.existsByMd5(md5);</span><br><span class="line">            </span><br><span class="line">            <span class="keyword">if</span> (existingSnapshotId == <span class="literal">null</span>) &#123;</span><br><span class="line">                <span class="comment">// 如果不存在，则创建新的商品快照</span></span><br><span class="line">                <span class="type">GoodsSnapshotEntity</span> <span class="variable">snapshotEntity</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">GoodsSnapshotEntity</span>();</span><br><span class="line">                snapshotEntity.setId(goodsId);</span><br><span class="line">                snapshotEntity.setCode((String) goods.get(<span class="string">&quot;code&quot;</span>));</span><br><span class="line">                snapshotEntity.setTitle((String) goods.get(<span class="string">&quot;title&quot;</span>));</span><br><span class="line">                snapshotEntity.setDescription((String) goods.get(<span class="string">&quot;description&quot;</span>));</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 设置检查项数据，需要先检查是否存在</span></span><br><span class="line">                <span class="keyword">if</span> (goods.containsKey(<span class="string">&quot;checkup_1&quot;</span>)) &#123;</span><br><span class="line">                    snapshotEntity.setCheckup_1((String) goods.get(<span class="string">&quot;checkup_1&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (goods.containsKey(<span class="string">&quot;checkup_2&quot;</span>)) &#123;</span><br><span class="line">                    snapshotEntity.setCheckup_2((String) goods.get(<span class="string">&quot;checkup_2&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (goods.containsKey(<span class="string">&quot;checkup_3&quot;</span>)) &#123;</span><br><span class="line">                    snapshotEntity.setCheckup_3((String) goods.get(<span class="string">&quot;checkup_3&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (goods.containsKey(<span class="string">&quot;checkup_4&quot;</span>)) &#123;</span><br><span class="line">                    snapshotEntity.setCheckup_4((String) goods.get(<span class="string">&quot;checkup_4&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">if</span> (goods.containsKey(<span class="string">&quot;checkup&quot;</span>)) &#123;</span><br><span class="line">                    snapshotEntity.setCheckup((String) goods.get(<span class="string">&quot;checkup_5&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                </span><br><span class="line">                snapshotEntity.setImage((String) goods.get(<span class="string">&quot;image&quot;</span>));</span><br><span class="line">                snapshotEntity.setInitialPrice(<span class="keyword">new</span> <span class="title class_">BigDecimal</span>(goods.get(<span class="string">&quot;initialPrice&quot;</span>).toString()));</span><br><span class="line">                snapshotEntity.setCurrentPrice(currentPrice);</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 设置类型、标签和规则信息</span></span><br><span class="line">                snapshotEntity.setType((String) goods.get(<span class="string">&quot;type&quot;</span>));</span><br><span class="line">                <span class="keyword">if</span> (goods.containsKey(<span class="string">&quot;tag&quot;</span>)) &#123;</span><br><span class="line">                    snapshotEntity.setTag((String) goods.get(<span class="string">&quot;tag&quot;</span>));</span><br><span class="line">                &#125;</span><br><span class="line">                snapshotEntity.setRuleName((String) goods.get(<span class="string">&quot;ruleName&quot;</span>));</span><br><span class="line">                snapshotEntity.setRule((String) goods.get(<span class="string">&quot;rule&quot;</span>));</span><br><span class="line">                </span><br><span class="line">                snapshotEntity.setMd5(md5);</span><br><span class="line">                </span><br><span class="line">                <span class="comment">// 保存到MongoDB</span></span><br><span class="line">                snapshotId = goodsSnapshotDao.insert(snapshotEntity);</span><br><span class="line">                log.info(<span class="string">&quot;创建商品快照成功，商品ID=&#123;&#125;，MD5=&#123;&#125;，快照ID=&#123;&#125;&quot;</span>, goodsId, md5, snapshotId);</span><br><span class="line">            &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">                <span class="comment">// 已存在，直接使用</span></span><br><span class="line">                snapshotId = existingSnapshotId;</span><br><span class="line">                log.info(<span class="string">&quot;使用已存在的商品快照，商品ID=&#123;&#125;，MD5=&#123;&#125;，快照ID=&#123;&#125;&quot;</span>, goodsId, md5, snapshotId);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="comment">// 没有MD5，使用随机UUID作为快照ID</span></span><br><span class="line">            snapshotId = UUID.randomUUID().toString();</span><br><span class="line">            log.warn(<span class="string">&quot;商品没有MD5值，使用随机UUID作为快照ID：&#123;&#125;&quot;</span>, snapshotId);</span><br><span class="line">        &#125;</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 4. 创建本地订单记录</span></span><br><span class="line">        <span class="type">OrderEntity</span> <span class="variable">order</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">OrderEntity</span>();</span><br><span class="line">        order.setCustomerId(customerId);</span><br><span class="line">        order.setGoodsId(goodsId);</span><br><span class="line">        order.setSnapshotId(snapshotId); <span class="comment">// 使用获取到的快照ID</span></span><br><span class="line">        order.setGoodsTitle((String) goods.get(<span class="string">&quot;title&quot;</span>));</span><br><span class="line">        order.setGoodsPrice(finalPrice);  <span class="comment">// 使用折扣后价格</span></span><br><span class="line">        order.setNumber(number);</span><br><span class="line">        order.setAmount(totalAmount);     <span class="comment">// 折扣后总金额</span></span><br><span class="line">        order.setGoodsImage((String) goods.get(<span class="string">&quot;image&quot;</span>));</span><br><span class="line">        order.setGoodsDescription((String) goods.get(<span class="string">&quot;description&quot;</span>));</span><br><span class="line">        order.setOutTradeNo(outTradeNo);</span><br><span class="line">        order.setStatus(<span class="number">1</span>); <span class="comment">// 1-待支付</span></span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 设置创建时间</span></span><br><span class="line">        <span class="type">LocalDateTime</span> <span class="variable">now</span> <span class="operator">=</span> LocalDateTime.now();</span><br><span class="line">        order.setCreateDate(now.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd&quot;</span>)));</span><br><span class="line">        order.setCreateTime(now.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>)));</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 保存订单</span></span><br><span class="line">        orderDao.insert(order);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 记录支付订单创建日志</span></span><br><span class="line">        Map&lt;String, Object&gt; logInfo = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">        logInfo.put(<span class="string">&quot;customerId&quot;</span>, customerId);</span><br><span class="line">        logInfo.put(<span class="string">&quot;goodsId&quot;</span>, goodsId);</span><br><span class="line">        logInfo.put(<span class="string">&quot;goodsTitle&quot;</span>, goods.get(<span class="string">&quot;title&quot;</span>));</span><br><span class="line">        logInfo.put(<span class="string">&quot;number&quot;</span>, number);</span><br><span class="line">        logInfo.put(<span class="string">&quot;amount&quot;</span>, totalAmount.toString());</span><br><span class="line">        </span><br><span class="line">        orderLogger.logOperation(<span class="string">&quot;CREATE_ORDER&quot;</span>, outTradeNo, <span class="string">&quot;wechat&quot;</span>, logInfo);</span><br><span class="line">        </span><br><span class="line">        <span class="comment">// 5. 调用PaymentService创建微信支付订单</span></span><br><span class="line">        <span class="keyword">try</span> &#123;</span><br><span class="line">            Map&lt;String, Object&gt; payResult = paymentService.unifiedOrder(order, now);</span><br><span class="line">            <span class="type">QrConfig</span> <span class="variable">qrConfig</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">QrConfig</span>();</span><br><span class="line">            qrConfig.setWidth(<span class="number">230</span>);</span><br><span class="line">            qrConfig.setHeight(<span class="number">230</span>);</span><br><span class="line">            qrConfig.setMargin(<span class="number">2</span>);</span><br><span class="line">            <span class="type">String</span> <span class="variable">codeUrl</span> <span class="operator">=</span> (String) payResult.get(<span class="string">&quot;codeUrl&quot;</span>);</span><br><span class="line">            <span class="type">String</span> <span class="variable">qrCodeBase64</span> <span class="operator">=</span> QrCodeUtil.generateAsBase64(codeUrl, qrConfig, <span class="string">&quot;jpg&quot;</span>);</span><br><span class="line">            payResult.put(codeUrl, qrCodeBase64);</span><br><span class="line">            <span class="keyword">return</span> payResult;</span><br><span class="line">        &#125; <span class="keyword">catch</span> (PayException e) &#123;</span><br><span class="line">            <span class="comment">// 支付订单创建失败，更新本地订单状态</span></span><br><span class="line">            orderDao.updateOrderStatus(outTradeNo, <span class="number">0</span>, <span class="literal">null</span>); <span class="comment">// 0-订单创建失败</span></span><br><span class="line">            log.error(<span class="string">&quot;支付创建失败，订单已标记为失败状态，订单号：&#123;&#125;&quot;</span>, outTradeNo);</span><br><span class="line">            </span><br><span class="line">            <span class="comment">// 重新抛出异常</span></span><br><span class="line">            <span class="keyword">throw</span> e;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>调用PaymentService创建微信支付订单</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/**</span></span><br><span class="line"><span class="comment">    * 创建微信支付订单</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">   <span class="meta">@Override</span></span><br><span class="line">   <span class="keyword">public</span> Map&lt;String, Object&gt; <span class="title function_">unifiedOrder</span><span class="params">(OrderEntity order, LocalDateTime now)</span> &#123;</span><br><span class="line">       <span class="keyword">try</span> &#123;</span><br><span class="line">           <span class="comment">// 创建支付参数</span></span><br><span class="line">           <span class="comment">// 创建金额对象</span></span><br><span class="line">           <span class="type">Amount</span> <span class="variable">amount</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">Amount</span>();</span><br><span class="line">           <span class="comment">// <span class="doctag">FIXME:</span> 上线时需要改为真实的金额</span></span><br><span class="line">           <span class="comment">// amount.setTotal(order.getAmount().multiply(new BigDecimal(100)).intValue()); // 微信支付金额单位是分</span></span><br><span class="line">           amount.setTotal(<span class="number">1</span>);</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 创建场景信息</span></span><br><span class="line">           <span class="type">SceneInfo</span> <span class="variable">sceneInfo</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">SceneInfo</span>();</span><br><span class="line">           sceneInfo.setPayerClientIp(<span class="string">&quot;127.0.0.1&quot;</span>); <span class="comment">// 用户终端IP</span></span><br><span class="line"></span><br><span class="line">           <span class="comment">// 创建支付参数对象</span></span><br><span class="line">           <span class="type">PayParams</span> <span class="variable">payParams</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PayParams</span>();</span><br><span class="line">           payParams.setDescription(order.getGoodsTitle());</span><br><span class="line">           payParams.setOutTradeNo(order.getOutTradeNo());</span><br><span class="line">           payParams.setAmount(amount);</span><br><span class="line">           payParams.setNotifyUrl(payNotifyUrl);</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 设置订单失效时间，默认为20分钟后</span></span><br><span class="line">           <span class="type">LocalDateTime</span> <span class="variable">expireTime</span> <span class="operator">=</span> now.plusMinutes(<span class="number">20</span>);</span><br><span class="line">           <span class="type">String</span> <span class="variable">timeExpire</span> <span class="operator">=</span> expireTime.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd&#x27;T&#x27;HH:mm:ss&#x27;Z&#x27;&quot;</span>));</span><br><span class="line">           payParams.setTimeExpire(OffsetDateTime.parse(timeExpire));</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 设置场景信息</span></span><br><span class="line">           payParams.setSceneInfo(sceneInfo);</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 调用微信支付接口</span></span><br><span class="line">           WechatResponseEntity&lt;ObjectNode&gt; payResult = wechatApiProvider.directPayApi(<span class="string">&quot;his-vue&quot;</span>).nativePay(payParams);</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 获取支付二维码URL</span></span><br><span class="line">           <span class="type">String</span> <span class="variable">codeUrl</span> <span class="operator">=</span> payResult.getBody().get(<span class="string">&quot;code_url&quot;</span>).asText();</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 将支付二维码URL缓存到Redis中，有效期与订单失效时间一致（20分钟）</span></span><br><span class="line">           cachePayCodeUrl(order.getOutTradeNo(), codeUrl, <span class="number">20</span>);</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 构建返回结果</span></span><br><span class="line">           Map&lt;String, Object&gt; result = <span class="keyword">new</span> <span class="title class_">HashMap</span>&lt;&gt;();</span><br><span class="line">           result.put(<span class="string">&quot;orderId&quot;</span>, order.getId());</span><br><span class="line">           result.put(<span class="string">&quot;outTradeNo&quot;</span>, order.getOutTradeNo());</span><br><span class="line">           result.put(<span class="string">&quot;amount&quot;</span>, order.getAmount());</span><br><span class="line">           result.put(<span class="string">&quot;goodsTitle&quot;</span>, order.getGoodsTitle());</span><br><span class="line">           result.put(<span class="string">&quot;codeUrl&quot;</span>, codeUrl); <span class="comment">// 微信支付二维码链接</span></span><br><span class="line">           result.put(<span class="string">&quot;timeExpire&quot;</span>, expireTime.format(DateTimeFormatter.ofPattern(<span class="string">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>))); <span class="comment">// 失效时间</span></span><br><span class="line">           </span><br><span class="line">           <span class="keyword">return</span> result;</span><br><span class="line">       &#125; <span class="keyword">catch</span> (Exception e) &#123;</span><br><span class="line">           <span class="comment">// 记录支付失败日志</span></span><br><span class="line">           log.error(<span class="string">&quot;支付订单创建失败 - 订单号: &#123;&#125;, 渠道: &#123;&#125;, 金额: &#123;&#125;, 原因: &#123;&#125;&quot;</span>, </span><br><span class="line">               order.getOutTradeNo(), <span class="string">&quot;wechat&quot;</span>, order.getAmount().toString(), e.getMessage());</span><br><span class="line">           </span><br><span class="line">           <span class="comment">// 抛出支付异常，由调用者处理订单状态更新</span></span><br><span class="line">           <span class="type">PayException</span> <span class="variable">payException</span> <span class="operator">=</span> <span class="keyword">new</span> <span class="title class_">PayException</span>(<span class="string">&quot;PAY_CREATE_FAIL&quot;</span>, <span class="string">&quot;创建支付订单失败: &quot;</span> + e.getMessage(), </span><br><span class="line">               order.getOutTradeNo(), <span class="string">&quot;wechat&quot;</span>, e);</span><br><span class="line">           log.error(<span class="string">&quot;支付异常 - 错误码: &#123;&#125;, 订单号: &#123;&#125;, 渠道: &#123;&#125;, 异常信息: &#123;&#125;&quot;</span>, </span><br><span class="line">               payException.getErrorCode(), </span><br><span class="line">               payException.getOutTradeNo(), </span><br><span class="line">               payException.getChannel(), </span><br><span class="line">               payException.getMessage(), </span><br><span class="line">               payException);</span><br><span class="line">           <span class="keyword">throw</span> payException;</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/java/" rel="tag"># java</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2025/05/05/QLExpress%E8%A7%84%E5%88%99%E5%BC%95%E6%93%8E-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-16/" rel="prev" title="QLExpress规则引擎-java学习笔记(16)">
+      <i class="fa fa-chevron-left"></i> QLExpress规则引擎-java学习笔记(16)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2025/05/17/%E5%88%A9%E7%94%A8%E5%86%85%E7%BD%91%E7%A9%BF%E9%80%8F%E6%8E%A5%E6%94%B6%E4%BB%98%E6%AC%BE%E7%BB%93%E6%9E%9C-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-18/" rel="next" title="利用内网穿透接收付款结果-java学习笔记(18)">
+      利用内网穿透接收付款结果-java学习笔记(18) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E7%94%A8MongoDB%E5%AD%98%E5%82%A8%E5%BF%AB%E7%85%A7"><span class="nav-number">1.</span> <span class="nav-text">为什么用MongoDB存储快照?</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MongoDB%E7%9A%84%E9%9B%86%E5%90%88%E4%B8%8E%E6%96%87%E6%A1%A3"><span class="nav-number">2.</span> <span class="nav-text">MongoDB的集合与文档</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E9%80%BB%E8%BE%91%E5%BA%93"><span class="nav-number">2.1.</span> <span class="nav-text">创建逻辑库</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%8C%81%E4%B9%85%E5%B1%82%E4%BB%A3%E7%A0%81"><span class="nav-number">3.</span> <span class="nav-text">编写持久层代码</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAPojo%E6%98%A0%E5%B0%84%E7%B1%BB"><span class="nav-number">3.1.</span> <span class="nav-text">创建Pojo映射类</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99Dao%E6%96%B9%E6%B3%95"><span class="nav-number">3.2.</span> <span class="nav-text">编写Dao方法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%99%90%E5%AE%9A%E7%89%B9%E6%AE%8A%E5%AE%A2%E6%88%B7%E4%B8%8B%E5%8D%95%E8%B4%AD%E4%B9%B0%E4%BD%93%E6%A3%80%E5%A5%97%E9%A4%90"><span class="nav-number">4.</span> <span class="nav-text">限定特殊客户下单购买体检套餐</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E5%86%99%E6%8C%81%E4%B9%85%E5%B1%82%E4%BB%A3%E7%A0%81-1"><span class="nav-number">4.1.</span> <span class="nav-text">编写持久层代码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%85%B3%E9%97%AD%E8%B6%85%E6%97%B6%E6%9C%AA%E6%94%AF%E4%BB%98%E7%9A%84%E8%AE%A2%E5%8D%95"><span class="nav-number">4.2.</span> <span class="nav-text">关闭超时未支付的订单</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%9B%E5%BB%BA%E5%BE%AE%E4%BF%A1%E6%94%AF%E4%BB%98%E8%AE%A2%E5%8D%95"><span class="nav-number">4.3.</span> <span class="nav-text">创建微信支付订单</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">Rywen</p>
+  <div class="site-description" itemprop="description">生活不止眼前的苟且，还有诗和远方.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">28</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2025</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Rywen</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

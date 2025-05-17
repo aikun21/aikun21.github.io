@@ -181,6 +181,305 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/29/%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%BB%A4%E5%99%A8%E9%98%B2%E5%BE%A1XSS%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-8/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/29/%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%BB%A4%E5%99%A8%E9%98%B2%E5%BE%A1XSS%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-8/" class="post-title-link" itemprop="url">设置过滤器防御XSS脚本攻击-java学习笔记(8)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-29 10:30:37" itemprop="dateCreated datePublished" datetime="2024-12-29T10:30:37+08:00">2024-12-29</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-29 19:37:48" itemprop="dateModified" datetime="2025-03-29T19:37:48+08:00">2025-03-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>首先我们要创建一个执行转义的封装类，这个类继承 HttpservletRequestwrapper 父类。在Web项目中，我们无法修改 HttpservletRequest 实现类的内容，因为请求的实现类是由各个Web容器厂商自己扩展的。但是有时候我们还想修改请求类中的内容，这该怎么办呢?Java语言给我们留出了缺口，我们只要继承Java Web内置的HttpservletRequestwrapper 父类，就能修改请求类的内容。如果我们能修改请求类的内容，我要修改获取请求数据的函数，返回的并不是客户端Form表单或者Ajax提交的数据，而是经过转义之后数据。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/12/29/%E8%AE%BE%E7%BD%AE%E8%BF%87%E6%BB%A4%E5%99%A8%E9%98%B2%E5%BE%A1XSS%E8%84%9A%E6%9C%AC%E6%94%BB%E5%87%BB-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-8/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/28/SaToken%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A1%86%E6%9E%B6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/28/SaToken%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A1%86%E6%9E%B6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7/" class="post-title-link" itemprop="url">SaToken认证与授权框架-java学习笔记(7)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-28 13:35:51" itemprop="dateCreated datePublished" datetime="2024-12-28T13:35:51+08:00">2024-12-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-29 19:37:48" itemprop="dateModified" datetime="2025-03-29T19:37:48+08:00">2025-03-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Sa-Token是一个轻量级Java权限认证框架，主要解决:登录认证、权限认证、单点登录、OAuth2.0、分布式Session会话、微服务网关鉴权 等一系列权限相关问题。SaToken官方文档非常详尽，我们按照手册的指引可以很轻松的把SaToken整合到SpringBoot项目中。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/12/28/SaToken%E8%AE%A4%E8%AF%81%E4%B8%8E%E6%8E%88%E6%9D%83%E6%A1%86%E6%9E%B6-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-7/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/28/RBAC%E6%9D%83%E9%99%90%E6%A8%A1%E5%9E%8B-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-6/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/28/RBAC%E6%9D%83%E9%99%90%E6%A8%A1%E5%9E%8B-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-6/" class="post-title-link" itemprop="url">RBAC权限模型-java学习笔记(6)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-28 12:25:21" itemprop="dateCreated datePublished" datetime="2024-12-28T12:25:21+08:00">2024-12-28</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2025-03-29 19:37:48" itemprop="dateModified" datetime="2025-03-29T19:37:48+08:00">2025-03-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>由于所有的管理系统都少不了权限管理，所以我们先学习RBAC权限模型的相关知识，然后给后端项目配置SaToken认证与授权框架。</p>
+<h2 id="RBAC权限模型"><a href="#RBAC权限模型" class="headerlink" title="RBAC权限模型"></a>RBAC权限模型</h2><p>RBAC（Role-Based Access Control，基于角色的访问控制）是一种常见的权限管理模型，它通过将权限与角色关联，来实现对用户访问资源的控制。</p>
+<p>RBAC模型将权限分为以下几种：</p>
+<ul>
+<li>角色（Role）：一组权限的集合。</li>
+<li>权限（Permission）：对资源的操作。</li>
+<li>用户（User）：拥有角色和权限的人。</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2024/12/28/RBAC%E6%9D%83%E9%99%90%E6%A8%A1%E5%9E%8B-java%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-6/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/23/%E9%85%8D%E7%BD%AEMongoDB%E3%80%81Redis%E4%BB%A5%E5%8F%8A%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="Rywen">
+      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Rywen's Blog">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/12/23/%E9%85%8D%E7%BD%AEMongoDB%E3%80%81Redis%E4%BB%A5%E5%8F%8A%E6%B6%88%E6%81%AF%E9%98%9F%E5%88%97/" class="post-title-link" itemprop="url">配置MongoDB、Redis以及消息队列 5</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2024-12-23 22:13:29" itemprop="dateCreated datePublished" datetime="2024-12-23T22:13:29+08:00">2024-12-23</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2024-12-28 12:08:06" itemprop="dateModified" datetime="2024-12-28T12:08:06+08:00">2024-12-28</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h2 id="配置MongoDB"><a href="#配置MongoDB" class="headerlink" title="配置MongoDB"></a>配置MongoDB</h2><p>在 <code>application.yml</code> 文件中，配置MongoDB连接。因为MongoDB自带数据库连接池，所以我们不需要在Java项目中重复配置连接池。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="string">......</span></span><br><span class="line">  <span class="attr">data:</span></span><br><span class="line">    <span class="attr">mongodb:</span></span><br><span class="line">      <span class="attr">host:</span> <span class="string">localhost</span></span><br><span class="line">      <span class="attr">port:</span> <span class="number">27017</span></span><br><span class="line">      <span class="attr">database:</span> <span class="string">his</span></span><br><span class="line">      <span class="attr">authentication-database:</span> <span class="string">admin</span></span><br><span class="line">      <span class="attr">username:</span> <span class="string">admin</span></span><br><span class="line">      <span class="attr">password:</span> <span class="string">abc123456</span></span><br></pre></td></tr></table></figure>
+
+<h2 id="配置Redis"><a href="#配置Redis" class="headerlink" title="配置Redis"></a>配置Redis</h2><p>在 <code>application.yml</code> 文件中，配置Redis连接。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="string">......</span></span><br><span class="line">  <span class="attr">redis:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">localhost</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">6379</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">abc123456</span></span><br></pre></td></tr></table></figure>
+
+<h3 id="避免RedisTemplate保存乱码数据"><a href="#避免RedisTemplate保存乱码数据" class="headerlink" title="避免RedisTemplate保存乱码数据"></a>避免RedisTemplate保存乱码数据</h3><p>因为SpringBoot Data中默认的RedisTemplate存在序列化机制的问题，向Redis里面保存Hash类型数据通常是乱码的，为了解决这个问题，我们需要自己定义配置类，修改RedisTemplate使用的序列化机制。</p>
+<p>在<code>com.example.his.api.config</code>包中，创建 <code>RedisTemplateconfig</code> 类</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> com.jiang.his.config;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Bean;</span><br><span class="line"><span class="keyword">import</span> org.springframework.context.annotation.Configuration;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.connection.RedisConnectionFactory;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.core.RedisTemplate;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;</span><br><span class="line"><span class="keyword">import</span> org.springframework.data.redis.serializer.StringRedisSerializer;</span><br><span class="line"></span><br><span class="line"><span class="meta">@Configuration</span></span><br><span class="line"><span class="keyword">public</span> <span class="keyword">class</span> <span class="title class_">RedisTemplateConfig</span> &#123;</span><br><span class="line">    <span class="meta">@Bean</span></span><br><span class="line">    <span class="keyword">public</span> RedisTemplate&lt;Object, Object&gt; <span class="title function_">redisTemplate</span><span class="params">(RedisConnectionFactory redisConnectionFactory)</span> &#123;</span><br><span class="line">        RedisTemplate&lt;Object, Object&gt; template = <span class="keyword">new</span> <span class="title class_">RedisTemplate</span>&lt;&gt;();</span><br><span class="line">        template.setKeySerializer(<span class="keyword">new</span> <span class="title class_">StringRedisSerializer</span>());</span><br><span class="line">        template.setValueSerializer(<span class="keyword">new</span> <span class="title class_">StringRedisSerializer</span>());</span><br><span class="line">        template.setHashKeySerializer(<span class="keyword">new</span> <span class="title class_">StringRedisSerializer</span>());</span><br><span class="line">        template.setHashValueSerializer(<span class="keyword">new</span> <span class="title class_">GenericJackson2JsonRedisSerializer</span>());</span><br><span class="line">        template.setConnectionFactory(redisConnectionFactory);</span><br><span class="line">        <span class="keyword">return</span> template;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h2 id="配置RabbitMQ消息队列"><a href="#配置RabbitMQ消息队列" class="headerlink" title="配置RabbitMQ消息队列"></a>配置RabbitMQ消息队列</h2><p>在 application.yml 文件中，我们填上消息队列的配置信息。Java项目启动后，SpringBoot会自动接收RabbitMQ中的消息。</p>
+<figure class="highlight yaml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">spring:</span></span><br><span class="line"><span class="string">......</span></span><br><span class="line">  <span class="attr">rabbitmq:</span></span><br><span class="line">    <span class="attr">host:</span> <span class="string">localhost</span></span><br><span class="line">    <span class="attr">port:</span> <span class="number">5672</span></span><br><span class="line">    <span class="attr">username:</span> <span class="string">admin</span></span><br><span class="line">    <span class="attr">password:</span> <span class="string">abc123456</span></span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
     <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2024/12/21/%E5%88%9B%E5%BB%BA-spring-boot-%E9%A1%B9%E7%9B%AE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -621,300 +920,6 @@
   
   
 
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2018/01/26/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E5%BA%93/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/01/26/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E5%BA%93/" class="post-title-link" itemprop="url">常用的工具库</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-26 14:58:08" itemprop="dateCreated datePublished" datetime="2018-01-26T14:58:08+08:00">2018-01-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h1 id="前端"><a href="#前端" class="headerlink" title="前端"></a>前端</h1><h2 id="动画"><a href="#动画" class="headerlink" title="动画"></a>动画</h2><ul>
-<li><a target="_blank" rel="noopener" href="https://greensock.com/gsap">GreenSock | GSAP</a>: CSS动画类库</li>
-<li><a target="_blank" rel="noopener" href="http://robertpenner.com/easing/">easing</a>: 函数式动画库</li>
-</ul>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/01/26/%E5%B8%B8%E7%94%A8%E7%9A%84%E5%B7%A5%E5%85%B7%E5%BA%93/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2018/01/03/offset/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2018/01/03/offset/" class="post-title-link" itemprop="url">offset</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2018-01-03 10:40:13" itemprop="dateCreated datePublished" datetime="2018-01-03T10:40:13+08:00">2018-01-03</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>先来一张网上的图<br><img src="http://oy9tlpm12.bkt.clouddn.com/3131637-50e9ea1bc0764f99.png"></p>
-<p>当然，这个图是有浏览器的兼容问题的，不是每个浏览器都是这样定义，个人觉得有两种情况，内容盒模型(标准盒模型)，边框盒模型(IE怪异盒模型)</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2018/01/03/offset/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2017/11/09/JS%E5%B8%B8%E7%94%A8%E5%8E%9F%E7%94%9F%E5%87%BD%E6%95%B0%E6%B1%87%E6%80%BB/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/11/09/JS%E5%B8%B8%E7%94%A8%E5%8E%9F%E7%94%9F%E5%87%BD%E6%95%B0%E6%B1%87%E6%80%BB/" class="post-title-link" itemprop="url">JS常用原生函数汇总</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-11-09 09:56:26" itemprop="dateCreated datePublished" datetime="2017-11-09T09:56:26+08:00">2017-11-09</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>工作中经常用到的方法。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/11/09/JS%E5%B8%B8%E7%94%A8%E5%8E%9F%E7%94%9F%E5%87%BD%E6%95%B0%E6%B1%87%E6%80%BB/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="https://aikun21.github.io/2017/10/31/Git%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="Rywen">
-      <meta itemprop="description" content="生活不止眼前的苟且，还有诗和远方.">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Rywen's Blog">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2017/10/31/Git%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/" class="post-title-link" itemprop="url">Git常用操作命令</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2017-10-31 16:45:30" itemprop="dateCreated datePublished" datetime="2017-10-31T16:45:30+08:00">2017-10-31</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2024-11-30 22:22:09" itemprop="dateModified" datetime="2024-11-30T22:22:09+08:00">2024-11-30</time>
-              </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h2 id="git-分支操作"><a href="#git-分支操作" class="headerlink" title="git 分支操作"></a>git 分支操作</h2><h3 id="查看本地分支"><a href="#查看本地分支" class="headerlink" title="查看本地分支"></a>查看本地分支</h3><p><code>git branch</code></p>
-<h3 id="查看远程分支"><a href="#查看远程分支" class="headerlink" title="查看远程分支"></a>查看远程分支</h3><p><code>git branch -a</code></p>
-<h3 id="创建本地分支"><a href="#创建本地分支" class="headerlink" title="创建本地分支"></a>创建本地分支</h3><p><code>git branch (br)</code></p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2017/10/31/Git%E5%B8%B8%E7%94%A8%E6%93%8D%E4%BD%9C%E5%91%BD%E4%BB%A4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
 
   
   <nav class="pagination">
@@ -984,7 +989,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">24</span>
+          <span class="site-state-item-count">28</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
