@@ -6,6 +6,8 @@ tags:
 
 我们将来要写很多Web方法，而且这些方法都要向前端返回JSON格式的数据。那么我们能不能约定好JSON对象中的公共属性呢?
 
+<!-- more -->
+
 因为Controller类用上 `@RestController` 注解之后，Web方法返回的对象会被自动转换成JSON对象，所以我们只需要声明一个封装类，让所有Web方法返回这个封装类的对象即可。除了公共属性之外，不同的Web方法要返回的业务数据也不尽相同，所以选择动态的结构才是最佳的方案，恰好HashMap允许我们随便添加数据，那就选择HashMap作为父类吧。在 com.jiang.his.common 包中，创建 R.java 类。
 
 ```java

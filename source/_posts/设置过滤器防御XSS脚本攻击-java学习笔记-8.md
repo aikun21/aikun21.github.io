@@ -6,6 +6,8 @@ tags:
 
 首先我们要创建一个执行转义的封装类，这个类继承 HttpservletRequestwrapper 父类。在Web项目中，我们无法修改 HttpservletRequest 实现类的内容，因为请求的实现类是由各个Web容器厂商自己扩展的。但是有时候我们还想修改请求类中的内容，这该怎么办呢?Java语言给我们留出了缺口，我们只要继承Java Web内置的HttpservletRequestwrapper 父类，就能修改请求类的内容。如果我们能修改请求类的内容，我要修改获取请求数据的函数，返回的并不是客户端Form表单或者Ajax提交的数据，而是经过转义之后数据。
 
+<!-- more -->
+
 在 com.jiang.his.config.xss 包中创建 XssHttpServletRequestwrapper 类。把获取请求头和请求体数据的方法都要重写，返回的是经过XSS转义后的数据。
 
 ```java

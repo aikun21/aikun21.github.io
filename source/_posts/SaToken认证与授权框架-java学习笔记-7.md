@@ -6,6 +6,8 @@ tags:
 
 Sa-Token是一个轻量级Java权限认证框架，主要解决:登录认证、权限认证、单点登录、OAuth2.0、分布式Session会话、微服务网关鉴权 等一系列权限相关问题。SaToken官方文档非常详尽，我们按照手册的指引可以很轻松的把SaToken整合到SpringBoot项目中。
 
+<!-- more -->
+
 [SaToken官方文档](https://sa-token.cc/)
 
 ## 认证与授权
